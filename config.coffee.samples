@@ -1,0 +1,8 @@
+#    Author: 易晓峰
+#    E-mail: wvv8oo@gmail.com
+#    Date: 12/29/14 5:12 PM
+#    Description: 配置文件，请将此文件名更改为config.coffee
+
+module.exports =
+  #临时工作目录，用于clone临时文件
+  tempDirectory: ''
