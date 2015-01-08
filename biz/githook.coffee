@@ -30,7 +30,7 @@ insertTask = (task, cb)->
     (done)-> _entity.task.save task, done
   )
 
-  _async.waterfall task, (err)-> cb err
+  _async.waterfall queue, (err)-> cb err
 
 #批量插入任务，检查任务是否存在
 bulkInsertTasks = (tasks, cb)->
@@ -94,4 +94,4 @@ exports.execute = (data, cb)->
     (done)-> bulkInsertTasks tasks, done
   )
 
-  _async.waterfall queue, cb
+  _async.waterfall queue, (err)-> cb err

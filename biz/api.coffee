@@ -58,7 +58,7 @@ exports.saveDeliveryServer = (client, cb)->
     _entity.delivery_server.exists {}, cond, notMatches, (err, total)->
       return done err if err
       err = _http.notAcceptableError("UUID #{data.uuid}已经存在") if total > 0
-      return done err
+      done err
   )
 
   queue.push(
