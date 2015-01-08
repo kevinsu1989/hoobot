@@ -1,0 +1,48 @@
+#    Author: 易晓峰
+#    E-mail: wvv8oo@gmail.com
+#    Date: 1/4/15 5:04 PM
+#    Description: 执行单个任务
+_build = require './build'
+_utils = require '../utils'
+_entity = require '../entity'
+_enum = require '../enumerate'
+_delivery = require './delivery'
+
+exports.execute (task, cb)->
+  localPath = null
+  queue = []
+
+  #构建项目
+  queue.push(
+    (done)->
+      _build.execute task.repos, task.hash, done
+  )
+
+  #打包项目
+  queue.push(
+    (done)->
+      #tar文件
+      localPath =
+      #执行打包的任务
+      commands = [
+        {
+          command: "tar -cvf #{localPath}.tar #{localPath}"
+          description: "打包数据"
+          task: task
+        }
+      ]
+
+      success = _utils.execCommands commands
+      return done null, success if not success
+  )
+
+  #分发到不同的服务器
+  queue.push(
+    (success, done)->
+      return done null, success if not success
+      _delivery.execute task, done
+  )
+
+
+  data = status: _enum.TaskStatus.Failure
+  _entity.update id: task.id, data, (err)-> done err, success

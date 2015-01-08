@@ -27,7 +27,7 @@ _app.configure(->
     limit: '1024mb'
     keepExtensions: true
   ))
-  _app.set 'port', process.env.PORT || _config.port || 1518
+  _app.set 'port', _config.port.agent || 1518
 )
 
 #接收并处理主服务器提交过来的分发内容

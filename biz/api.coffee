@@ -8,6 +8,8 @@ _http = require('bijou').http
 _entity = require '../entity'
 _githook = require './githook'
 _supervisor = require './supervisor'
+_utils = require '../utils'
+_deploy = require './deploy'
 
 #接收并处理githook，仅支持push events
 exports.gitHook = (client, cb)->
@@ -24,7 +26,7 @@ exports.gitHook = (client, cb)->
     console.log err if err
     result = success: true if success
     cb err, result
-    #执行任务
+    #如果插入成功，则执行任务
     _supervisor.execute() if success
 
 #获取任务列表
@@ -70,3 +72,7 @@ exports.saveDeliveryServer = (client, cb)->
 exports.deleteDeliveryServer = (client, cb)->
   id = client.params.id
   _entity.removeById id, cb
+
+
+#强行执行某个任务，一般用于因滚操作
+exports.runTask = (client, cb)->

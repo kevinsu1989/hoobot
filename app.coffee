@@ -41,7 +41,7 @@ _app.configure(()->
     )
   ))
   _app.use(_express.static(__dirname + '/static'))
-  _app.set 'port', process.env.PORT || _config.port || 8000
+  _app.set 'port', _config.port.delivery || 1518
 )
 
 require('./initialize')(_app)
