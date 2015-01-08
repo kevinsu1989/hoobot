@@ -1,0 +1,5 @@
+{
+  rules: [
+    server: 'http://192.168.8.108:1517/git/commit'
+  ]
+}
