@@ -25,6 +25,7 @@ exports.deliverProject = (tarfile, task, cb)->
     formData: formData
 
   exports.request options, (err, res, body)->
+    console.log err, body
     return cb err if err
     if res.statusCode isnt 200
       err = new Error('代理服务器返回状态码不正确，请检查')

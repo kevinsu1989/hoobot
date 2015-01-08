@@ -17,6 +17,7 @@
     "shelljs": "^0.3.0"
   },
   "scripts": {
-    "start": "node-dev app.coffee"
+    "start": "node-dev app.coffee",
+    "install": "cp config.cofee.sample config.coffee"
   }
 }

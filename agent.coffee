@@ -18,7 +18,8 @@ _deploy = require './biz/deploy'
 _config = require './config'
 
 _app.configure(->
-  uploadDir = _path.join __dirname, _config.uploadTemporary
+  uploadDir = _path.resolve __dirname, _config.uploadTemporary
+  console.log uploadDir
   _fs.ensureDirSync uploadDir
 
   _app.use(_express.methodOverride())

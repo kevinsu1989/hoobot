@@ -1,0 +1,35 @@
+#    Author: 易晓峰
+#    E-mail: wvv8oo@gmail.com
+#    Date: 12/29/14 5:12 PM
+#    Description:
+
+module.exports =
+  #svn的目录
+  svnDirectory: './svn'
+  #部署项目的目录
+  projectDirectory: '.hoobot/www'
+  #临时工作目录，用于clone临时文件
+  tempDirectory: ''
+  #代理临时的上传目录
+  uploadTemporary: '.hoobot/uploadTemporary'
+  bhf:
+    #bhf的base url
+    baseUrl: 'http://bhf.hunantv.com/api/'
+    acccount:
+      account: 'root'
+      password: '+10086'
+  database:
+    client: 'mysql',
+    connection:
+      host     : '127.0.0.1',
+      user     : 'root',
+      password : '',
+      database : 'hoobot'
+  redis:
+    server: 'localhost'
+    port: 6379
+    database: 0
+    unique: 'bhf-c63a6d217'
+  port:
+    delivery: 1517
+    agent: 1518

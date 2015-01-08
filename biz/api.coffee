@@ -73,6 +73,8 @@ exports.deleteDeliveryServer = (client, cb)->
   id = client.params.id
   _entity.removeById id, cb
 
+#获取所有的项目列表
+exports.getProject = (client, cb)->
 
 #强行执行某个任务，一般用于因滚操作
 exports.runTask = (client, cb)->

@@ -33,6 +33,7 @@ class Labor
     )
 
     _async.waterfall queue, (err)->
+      console.log err if err
       self.finishTask task, !err, cb
 
   #完成任务的操作
@@ -58,7 +59,6 @@ class Labor
 
       #执行任务
       self.executeTask task, (err)->
-        console.log 'done'.red
         self.isRunning = false
         #继续执行任务
         self.execute()
