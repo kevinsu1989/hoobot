@@ -16,7 +16,7 @@ _supervisor = require './biz/supervisor'
 
 #特殊路由
 specialRouter = (app)->
-#  app.get '/', (req, res, next)-> res.sendfile 'static/index.html'
+  app.get '/', (req, res, next)-> res.sendfile 'static/index.html'
 
 #确保所依赖的命令是否存在
 ensureCommandDepends = ()->

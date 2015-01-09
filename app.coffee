@@ -44,6 +44,13 @@ _app.configure(()->
   _app.set 'port', _config.port.delivery || 1518
 )
 
+#链接后的处理
+_app.io.route 'ready', (socket)->
+  text = "hi, 我就是机器人Hoobot了，现在的服务器工作是灰常正常滴"
+  _utils.emitRealLog text, 'green'
+
+_utils.onRealLog (data)-> _app.io.broadcast('realtime', data)
+
 require('./initialize')(_app)
 
 _app.listen _app.get 'port'

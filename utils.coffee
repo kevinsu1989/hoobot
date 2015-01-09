@@ -5,8 +5,17 @@
 _path = require 'path'
 _fs = require 'fs-extra'
 _async = require 'async'
+_events = require 'events'
 
 _config = require './config'
+
+_realEvent = new _events.EventEmitter()
+
+exports.onRealLog = (cb)->
+  _realEvent.addListener 'realLog', (log)-> cb?(log)
+
+#触发实时的日志
+exports.emitRealLog = (data)-> _realEvent.emit 'realLog', data
 
 #移除扩展名
 exports.removeExt = (filename)-> filename.replace /\.\w+/, ''
@@ -44,8 +53,6 @@ exports.cleanTarget = (target)->
   return if not _fs.existsSync target
   _fs.removeSync target
 
-exports.emitRealLog = (log, level)->
-  console.log log
 
 #批量执行命令，遇到问题即返回
 exports.execCommand = (command)->
