@@ -6,7 +6,7 @@
 _async = require 'async'
 
 _entity = require '../entity'
-_enum = require '../enumerate'
+_enum = require('../enumerate').TaskStatus
 _build = require './build'
 _transport = require './transport'
 _delivery = require './delivery'
@@ -33,15 +33,12 @@ class Labor
     )
 
     _async.waterfall queue, (err)->
-      console.log err if err
-      self.finishTask task, !err, cb
+      status = if err then _enum.Failure else _enum.Success
+      self.finishTask task, status, cb
 
   #完成任务的操作
-  finishTask: (task, success, cb)->
-    enumStatus = _enum.TaskStatus
-    task.status = if success then enumStatus.Success else enumStatus.Failure
-    task.failure_counter++ if not success
-
+  finishTask: (task, status, cb)->
+    task.failure_counter++ if not status isnt _enum.Success
     _entity.task.save task, (err)-> cb err
 
   execute: ()->
@@ -57,9 +54,36 @@ class Labor
         self.isRunning = false
         return
 
+      #该任务没有找到递送服务器
+      if not task.delivery_server
+        _utils.emitRealLog(
+          message: '任务没有合法的递送服务器'
+          task: task
+          type: 'task'
+        )
+
+        return self.finishTask task, _enum.ServerNotFound, (err)->
+          self.isRunning = false
+          self.execute()
+
+      _utils.emitRealLog (
+        message: '提取任务#{task.id}执行'
+        task: task
+        type: 'task'
+        process: 'start'
+      )
+
       #执行任务
       self.executeTask task, (err)->
         self.isRunning = false
+        _utils.emitRealLog(
+          message: '任务执行完成'
+          task: task
+          type: 'task'
+          process: 'end'
+          error: err
+        )
+
         #继续执行任务
         self.execute()
 

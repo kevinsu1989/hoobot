@@ -27,4 +27,6 @@ exports.schema =
     #仓库的地址，eg. git:
     repos: 'text'
     #这条任务将要递送的目标服务器
-    delivery_server: ''
+    target: {type: 'string', index: true}
+    #任务的类型
+    type: {type: 'string', index: true}

@@ -45,7 +45,7 @@ exports.cleanTarget = (target)->
   _fs.removeSync target
 
 exports.emitRealLog = (log, level)->
-  #console.log log, level
+  console.log log
 
 #批量执行命令，遇到问题即返回
 exports.execCommand = (command)->

@@ -24,8 +24,22 @@ exports.deliverProject = (tarfile, task, cb)->
     json: true
     formData: formData
 
+  _utils.emitRealLog(
+    message: '开始分发到服务器'
+    task: task
+    type: 'delivery'
+  )
+
   exports.request options, (err, res, body)->
-    console.log err, body
+    _utils.emitRealLog(
+      message: '分发完成'
+      task: task
+      statusCode: res.statusCode
+      error: err
+      responseBody: body
+      type: 'delivery'
+    )
+
     return cb err if err
     if res.statusCode isnt 200
       err = new Error('代理服务器返回状态码不正确，请检查')

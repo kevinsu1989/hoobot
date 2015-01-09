@@ -10,10 +10,10 @@ _path = require 'path'
 _app.http().io()
 _fs = require 'fs-extra'
 _http = require('bijou').http
-
 require 'shelljs/global'
 require 'colors'
 
+_utils = require './utils'
 _deploy = require './biz/deploy'
 _config = require './config'
 
@@ -33,9 +33,21 @@ _app.configure(->
 
 #接收并处理主服务器提交过来的分发内容
 _app.post('/agent', (req, res, next)->
-  attachment = req.files.attachment
+  _utils.emitRealLog(
+    message: '代理服务器收到分发请求'
+    body: req.body
+    type: 'agent'
+  )
 
+  attachment = req.files.attachment
   _deploy.execute attachment, req.body, (err)->
+    _utils.emitRealLog(
+      message: '代理服务器部署完成'
+      body: req.body
+      type: 'agent'
+      error: err
+    )
+
     result = success: !err
     _http.responseJSON err, result, res
 )

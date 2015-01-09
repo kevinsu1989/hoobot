@@ -20,14 +20,17 @@ exports.gitHook = (client, cb)->
       #忽略非push event
       ignore: true
 
+    _utils.emitRealLog '收到非法的web hook'
     return cb null, result
 
-  _githook.execute client.body, (err, success)->
-    console.log err if err
-    result = success: true if success
+  _githook.execute client.body, (err, taskCount)->
+    log = if err then err else "共有 #{taskCount}条任务进入队列"
+    _utils.emitRealLog log
+    result = success: true if not err
     cb err, result
+
     #如果插入成功，则执行任务
-    _supervisor.execute() if success
+    _supervisor.execute() if not err
 
 #获取任务列表
 exports.getTask = (client, cb)->

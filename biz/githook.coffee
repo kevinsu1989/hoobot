@@ -14,12 +14,15 @@ _bhfProxy = require './bhf-proxy'
 insertTask = (task, cb)->
   queue = []
 
-  #将相同项目的status为created都改掉，因为一个项目不需要重复
+  # 将相同项目的status为created都改掉，
+  # 相同项目、目标、类型不能重复
   queue.push(
     (done)->
       cond =
         project_id: task.project_id
         status: _enum.TaskStatus.Created
+        target: task.target
+        type: task.type
 
       data = status: _enum.TaskStatus.Canceled
       _entity.task.update cond, data, done
@@ -31,6 +34,7 @@ insertTask = (task, cb)->
   )
 
   _async.waterfall queue, (err)-> cb err
+
 
 #批量插入任务，检查任务是否存在
 bulkInsertTasks = (tasks, cb)->
@@ -59,6 +63,8 @@ analysePushEvent = (data)->
     branch = data.ref.replace(/^refs\/heads\/(.+)$/i, '$1')
 
     result.push(
+      type: extract.type
+      target: extract.target
       url: commit.url
       email: commit.author.email
       timestamp: new Date(commit.timestamp).valueOf()
@@ -94,4 +100,4 @@ exports.execute = (data, cb)->
     (done)-> bulkInsertTasks tasks, done
   )
 
-  _async.waterfall queue, (err)-> cb err
+  _async.waterfall queue, (err)-> cb err, tasks.length

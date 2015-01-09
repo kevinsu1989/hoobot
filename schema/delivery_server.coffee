@@ -7,6 +7,6 @@ exports.schema =
   name: 'delivery_server'
   fields:
     #接收服务器地址
-    receive_server: ''
+    target: ''
     #简短的唯一id，用于与git message中的命令对应，例如p-108，uuid应该是108
     uuid: ''
