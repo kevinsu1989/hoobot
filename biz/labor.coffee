@@ -33,12 +33,12 @@ class Labor
     )
 
     _async.waterfall queue, (err)->
-      status = if err then _enum.Failure else _enum.Success
-      self.finishTask task, status, cb
+      task.status = if err then _enum.Failure else _enum.Success
+      self.finishTask task, cb
 
   #完成任务的操作
-  finishTask: (task, status, cb)->
-    task.failure_counter++ if not status isnt _enum.Success
+  finishTask: (task, cb)->
+    task.failure_counter++ if task.status isnt _enum.Success
     _entity.task.save task, (err)-> cb err
 
   execute: ()->
@@ -62,7 +62,8 @@ class Labor
           type: 'task'
         )
 
-        return self.finishTask task, _enum.ServerNotFound, (err)->
+        task.status = _enum.ServerNotFound
+        return self.finishTask task, (err)->
           self.isRunning = false
           self.execute()
 

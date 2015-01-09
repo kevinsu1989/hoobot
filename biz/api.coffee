@@ -11,6 +11,10 @@ _supervisor = require './supervisor'
 _utils = require '../utils'
 _deploy = require './deploy'
 
+exports.postOnly = (client, cb)->
+  console.log 'abc'
+  cb null, "此API仅支持POST请求"
+
 #接收并处理githook，仅支持push events
 exports.gitHook = (client, cb)->
   data = client.body

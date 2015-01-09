@@ -19,7 +19,6 @@ _config = require './config'
 
 _app.configure(->
   uploadDir = _path.resolve __dirname, _config.uploadTemporary
-  console.log uploadDir
   _fs.ensureDirSync uploadDir
 
   _app.use(_express.methodOverride())
@@ -31,8 +30,12 @@ _app.configure(->
   _app.set 'port', _config.port.agent || 1518
 )
 
+_app.get('/', (req, res, next)->
+  res.end 'post only'
+)
+
 #接收并处理主服务器提交过来的分发内容
-_app.post('/agent', (req, res, next)->
+_app.post('/', (req, res, next)->
   _utils.emitRealLog(
     message: '代理服务器收到分发请求'
     body: req.body

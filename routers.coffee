@@ -7,11 +7,6 @@ module.exports = [
   {
     path: 'git/commit'
     biz: 'api'
-    methods: post: 'gitHook', delete: 0, patch: 0, put: 0
-  }
-  {
-    path: 'delivery'
-    biz: 'api'
-    methods: post: 'postDelivery'
+    methods: post: 'gitHook', get: 'postOnly', delete: 0, patch: 0, put: 0
   }
 ]

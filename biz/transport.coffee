@@ -31,10 +31,16 @@ exports.deliverProject = (tarfile, task, cb)->
   )
 
   exports.request options, (err, res, body)->
+    message = '分发完成'
+    if err
+      message += "，但递送到代理服服务器发生错误"
+    else if res and res.statusCode isnt 200
+      message += "，但服务器返回状态码不正确->#{res.statusCode}"
+
     _utils.emitRealLog(
       message: '分发完成'
       task: task
-      statusCode: res.statusCode
+      statusCode: res?.statusCode
       error: err
       responseBody: body
       type: 'delivery'
