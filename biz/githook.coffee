@@ -74,6 +74,7 @@ analysePushEvent = (data)->
       project_id: -1
       status: _enum.TaskStatus.Created
       repos: data.repository.url
+      failure_counter: 0
     )
 
   result

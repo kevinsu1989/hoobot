@@ -15,7 +15,7 @@ _config = require '../config'
 
 #分发tarboll到目标服务器
 exports.deliverProject = (tarfile, task, cb)->
-  formData = _.extend {}, task
+  formData = _.extend {}, _.compact(task)
   formData.attachment = _fs.createReadStream tarfile
 
   options =
