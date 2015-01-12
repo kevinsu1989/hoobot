@@ -78,7 +78,7 @@ class Labor
       self.executeTask task, (err)->
         self.isRunning = false
         _utils.emitRealLog(
-          message: '任务执行完成'
+          message: "任务执行完成，成功分发至#{task.delivery_server}"
           task: task
           type: 'task'
           process: 'end'

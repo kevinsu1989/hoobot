@@ -12,7 +12,6 @@ _fs = require 'fs-extra'
 _config = require './config'
 _entity = require './entity'
 _utils = require './utils'
-_supervisor = require './biz/supervisor'
 
 #特殊路由
 specialRouter = (app)->
@@ -75,5 +74,3 @@ module.exports = (app)->
   specialRouter app
   #初始化bijou
   initBijou app
-  #执行任务
-  _supervisor.execute()
