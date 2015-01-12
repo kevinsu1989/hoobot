@@ -22,6 +22,7 @@ exports.removeExt = (filename)-> filename.replace /\.\w+/, ''
 
 #从仓库名称中，提取项目的名称
 exports.extractProjectName = (repos)->
+  return '' if not repos
   repos.replace(/.+\/(.+)\.git$/, '$1')
 
 #临时工作目录
