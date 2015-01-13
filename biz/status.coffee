@@ -34,6 +34,6 @@ exports.update = ()->
           done null
     ), ((err)->
       _utils.emitEvent 'status', _agents
-      setTimeout (-> exports.update()), _config.updateAgentStatusInterval * 1000 * 60
+      setTimeout (-> exports.update()), (_config.updateAgentStatusInterval || 5) * 1000 * 60
     )
   )
