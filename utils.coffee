@@ -11,6 +11,15 @@ _config = require './config'
 
 _realEvent = new _events.EventEmitter()
 
+#触发事件
+exports.emitEvent = (name, arg...)-> _realEvent.emit(name, arg)
+
+#监听事件
+exports.addListener = (event, listener)-> _realEvent.addListener event, listener
+
+#监听
+exports.removeListener = (event, listener)-> _realEvent.removeListener event, listener
+
 exports.onRealLog = (cb)->
   _realEvent.addListener 'realLog', (log)-> cb?(log)
 

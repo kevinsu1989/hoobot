@@ -55,6 +55,14 @@ _app.post('/', (req, res, next)->
     _http.responseJSON err, result, res
 )
 
+#供服务器询询用
+_app.get('/are-you-working', (req, res, next)->
+  data =
+    version: require('./package.json').version
+    projectDirectory: _config.projectDirectory
+  _http.responseJSON null, data, res
+)
+
 _app.listen _app.get 'port'
 console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
 

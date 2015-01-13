@@ -45,6 +45,10 @@
             if(counter > 100) resetContainer()
             render(data)
         })
+
+        socket.on('status', function(data){
+            console.log(data)
+        })
     }
 
     $(document).ready(initial)

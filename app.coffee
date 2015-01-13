@@ -16,6 +16,7 @@ require 'colors'
 _utils = require './utils'
 _config = require './config'
 _supervisor = require './biz/supervisor'
+_status = require './biz/status'
 
 _app.configure(()->
   _app.use(_express.methodOverride())
@@ -46,17 +47,18 @@ _app.configure(()->
 )
 
 #链接后的处理
-_app.io.route 'ready', (socket)->
+_app.io.route 'ready', (req)->
   text = "hi, 我就是机器人Hoobot了，现在的服务器工作看起来是正常滴"
   _utils.emitRealLog text, 'green'
+  req.io.emit 'status', _status.realtimeStatus()
 
 _utils.onRealLog (data)-> _app.io.broadcast('realtime', data)
 
 require('./initialize')(_app)
 
 _app.listen _app.get 'port'
+console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
 
 #执行任务
-_supervisor.execute()
-
-console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
+#_supervisor.execute()
+_status.init()

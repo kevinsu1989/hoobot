@@ -13,6 +13,23 @@ _ = require 'lodash'
 _utils = require '../utils'
 _config = require '../config'
 
+#检测代理服务器是否在工作
+exports.areYouWorking = (server, cb)->
+  options =
+    json: true
+    url: "#{server}/are-you-working"
+
+  exports.request options, (err, res, body)->
+    return cb err if err
+    data =
+      statusCode: res.statusCode
+
+    if data.statusCode is 200
+      data.version = body.version
+      data.projectDirectory = body.projectDirectory
+
+    cb err, data
+
 #分发tarboll到目标服务器
 exports.deliverProject = (tarfile, task, cb)->
   formData = {}

@@ -1,6 +1,6 @@
 {
   "name": "hoobot",
-  "version": "0.0.1",
+  "version": "20150112.1",
   "dependencies": {
     "async": "^0.9.0",
     "bijou": "0.0.9",
