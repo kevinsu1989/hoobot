@@ -12,7 +12,8 @@ _config = require './config'
 _realEvent = new _events.EventEmitter()
 
 #触发事件
-exports.emitEvent = (name, arg...)-> _realEvent.emit(name, arg)
+exports.emitEvent = (name, args...)->
+  _realEvent.emit.apply _realEvent, [name].concat(args)
 
 #监听事件
 exports.addListener = (event, listener)-> _realEvent.addListener event, listener
@@ -63,21 +64,19 @@ exports.cleanTarget = (target)->
   return if not _fs.existsSync target
   _fs.removeSync target
 
-
 #批量执行命令，遇到问题即返回
-exports.execCommand = (command)->
-  result = exec(command.command)
+exports.execCommand = (command, cb)->
+  exec command.command, async: true, (err)->
+    data =
+      command: command.command
+      success: !!err
+      type: 'command'
+      task: command.task
+      description: command.description
 
-  data =
-    command: command.command
-    success: result.code is 0
-    type: 'command'
-    task: command.task
-    result: result
-
-  #推送实时的日志
-  @emitRealLog data
-  result
+    #推送实时的日志
+    exports.emitRealLog data
+    cb err, true
 
 #从git commit message中提取指令
 exports.extractCommandFromGitMessage = (message)->
