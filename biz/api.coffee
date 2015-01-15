@@ -16,8 +16,7 @@ exports.postOnly = (client, cb)->
   cb null, "此API仅支持POST请求"
 
 #接收并处理githook，仅支持push events
-exports.gitHook = (client, cb)->
-  data = client.body
+exports.gitHook = (data, cb)->
   if not (data.repository and data.commits?.length)
     result =
       success: true
@@ -37,25 +36,21 @@ exports.gitHook = (client, cb)->
     _supervisor.execute() if not err
 
 #获取任务列表
-exports.getTask = (client, cb)->
-  cond = project_id: client.query.project_id
-  _entity.task.find cond, cb
+exports.getTask = (query, cb)->
+  cond = project_id: query.project_id
+  options =
+    pagination: _entity.task.pagination query.pageIndex, query.pageSize
+  _entity.task.find cond, options, cb
 
 #获取服务器列表
-exports.getDeliveryServer = (client, cb)->
-  id = client.params.id
-  return _entity.delivery_server.findById id, cb
-
+exports.getDeliveryServer = (query, cb)->
   entity = _entity.delivery_server
-  pagination = entity.pagination client.query.pageIndex
+  pagination = entity.pagination query.pageIndex
   options = pagination: pagination
   entity.find {}, options, cb
 
 #保存分发服务器
-exports.saveDeliveryServer = (client, cb)->
-  data = client.body
-  data.id = client.params.id
-
+exports.saveDeliveryServer = (data, cb)->
   notMatches = {}
   notMatches.id = data.id if data.id
 
@@ -78,13 +73,9 @@ exports.saveDeliveryServer = (client, cb)->
   _async.waterfall queue, cb
 
 #删除分发服务器
-exports.deleteDeliveryServer = (client, cb)->
-  id = client.params.id
+exports.deleteDeliveryServer = (id, cb)->
   _entity.removeById id, cb
 
 #获取所有的项目列表
-exports.getProject = (client, cb)->
+exports.getProject = (cb)->
   _entity.task.getAllProject cb
-
-#强行执行某个任务，一般用于因滚操作
-exports.runTask = (client, cb)->

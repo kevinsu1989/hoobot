@@ -68,18 +68,20 @@
             <tr>
                 <th class="one wide">Hash</th>
                 <th>说明</th>
-                <th class="three wide">时间</th>
+                <th class="three wide">创建时间</th>
+                <th class="three wide">最后执行</th>
                 <th class="two wide">状态</th>
                 <th class="two wide">部署</th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="task in tasks" ng-class="{positive: runningTask.id == task.id}">
+            <tr ng-repeat="task in tasks.items" ng-class="{positive: runningTask.id == task.id}">
                 <td>
                     <a href="{{task.url}}" target="_blank">{{task.hash | limitTo: 10}}</a>
                 </td>
                 <td>{{task.message}}</td>
                 <td>{{task.timestamp | date: 'yyyy-MM-dd hh:mm'}}</td>
+                <td>{{task.last_execute | date: 'yyyy-MM-dd hh:mm'}}</td>
                 <td>{{task.status | taskStatus}}</td>
                 <td class="center aligned">
                     <div class="ui teal buttons">

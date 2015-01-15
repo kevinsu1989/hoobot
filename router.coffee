@@ -21,11 +21,10 @@ hoobotStatusRouter = (req)->
 
 #获取所有项目数据
 getProjectsRouter = (req)->
-  _api.getProject {}, (err, data)-> req.io.respond data
+  _api.getProject (err, data)-> req.io.respond data
 
 getTasksRouter = (req)->
-  client = query: req.data
-  _api.getTask client, (err, tasks)-> req.io.respond tasks
+  _api.getTask req.data, (err, tasks)-> req.io.respond tasks
 
 #执行指定的任务，仅能在空闲的时候执行任务
 runTaskRouter = (req)->
