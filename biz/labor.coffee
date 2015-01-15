@@ -15,6 +15,7 @@ _utils = require '../utils'
 
 class Labor
   isRunning: false
+  runningTask: null
   #constructor: ()->
 
   #执行任务
@@ -38,22 +39,39 @@ class Labor
 
   #完成任务的操作
   finishTask: (task, cb)->
+    self = @
     task.failure_counter++ if task.status isnt _enum.Success
-    _entity.task.save task, (err)-> cb err
+    task.last_execute = new Date().valueOf()
+    _entity.task.save task, (err)->
+      _utils.emitEvent 'task:stop', task
+      self.runningTask =  null
+      cb err
 
-  execute: ()->
+  #获取任务，如果没有指定任务id，则获取最前一条
+  getTask: (task_id, cb)->
+    if task_id
+      _entity.task.getTaskById task_id, cb
+    else
+      _entity.task.getForemostTask cb
+
+  execute: (task_id)->
     return if @isRunning
 
     self = @
     @isRunning = true
     #获取最前的一条任务
-    _entity.task.getForemostTask (err, task)->
+    @getTask task_id, (err, task)->
       #没有任务了
       if not task
         _utils.emitRealLog '所有任务都已经完成'
         self.isRunning = false
         return
 
+      self.runningTask =  task
+      _utils.emitEvent 'task:start', task
+
+#      self.isRunning = false
+#      return;
       #该任务没有找到递送服务器
       if not task.delivery_server
         _utils.emitRealLog(

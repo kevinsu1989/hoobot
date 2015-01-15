@@ -12,6 +12,18 @@ class Task extends _BaseEntity
   constructor: ()->
     super require('../schema/task').schema
 
+  #获取指定ID的任务
+  getTaskById: (task_id, cb)->
+    sql = "SELECT
+          A . *, B.server AS delivery_server
+      FROM
+          task A
+              LEFT JOIN
+          delivery_server B ON A.target = B.uuid
+      WHERE
+          A.id = #{task_id}"
+    @execute sql, (err, data)-> cb err, data && data[0]
+
   #获取最前的Task，每个项目只取最新一条，一个项目多次build没有意义
   getForemostTask: (cb)->
     sql = "
@@ -25,7 +37,7 @@ class Task extends _BaseEntity
                       FROM
                           task X
                       WHERE
-                          X.status = 1
+                          X.status = #{_enum.TaskStatus.Created}
                               AND X.project_id = A.project_id
                       ORDER BY X.id DESC
                       LIMIT 1) AS task_id

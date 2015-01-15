@@ -5,13 +5,16 @@
 
 _entity = require '../entity'
 _Labor = require('./labor').Labor
-_labors = []
-
-(->
-  #目前暂时用一个labor
-  _labors.push new _Labor()
-)()
+_labor = new _Labor()
 
 #执行队列任务
 exports.execute = ->
-  labor.execute() for labor in _labors
+  _labor.execute()
+
+#强行执行某个任务，必需没有任务执行
+exports.runTask = (task_id)->
+  return false if _labor.isRunning
+  _labor.execute task_id
+  return true
+
+exports.runningTask = _labor.runningTask
