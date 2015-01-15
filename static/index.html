@@ -1,18 +1,60 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <link href="main.css" media="screen" rel="stylesheet" />
-    <script language="javascript" src="socket.io/socket.io.js"></script>
-    <script language="javascript" src="jquery.js"></script>
-    <script language="javascript" src="main.js"></script>
-    <script language="javascript" src="typed.js"></script>
-    <title>Hoobot实时监控</title>
+<html ng-app="app">
+<head>
+    <title>Hoobot——控制台</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <script src="js/vendor/require.js" data-main="/js/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="/package/semantic/semantic.css">
+    <link href="css/main.css" media="screen" rel="stylesheet" />
+    <base href="/">
 </head>
 <body>
 
-<div id="container">
+<div class="ui icon message custom-message" quickly-message ng-class="message.type">
+    <i class="close icon"></i>
+    <i class="notched alarm icon"></i>
+    <div class="content">
+        <p ng-bind="message.content"></p>
+    </div>
+</div>
 
+<div class="ui internally celled grid" style="margin-top: 0px;">
+    <div class="ui row">
+        <div class="sixteen wide column">
+            <div class="ui secondary  menu">
+                <a class="item" href="/" ng-class="{active: activeMenu == 'task'}">
+                    <i class="cubes large blue icon"></i>任务
+                </a>
+                <a class="item" href="/realtime" ng-class="{active: activeMenu == 'realtime'}">
+                    <i class="wait large icon"></i>实时日志
+                </a>
+                <a class="item" href="/agent" ng-class="{active: activeMenu == 'agent'}">
+                    <i class="database large icon"></i>代理状态
+                </a>
+
+                <div class="right menu">
+                    <div class="item active">
+                        <ul class="ui horizontal list custom-agent-status" agent-status>
+                            <li class="item">
+                                <label>代理状态：</label>
+                            </li>
+                            <li class="item" ng-repeat="agent in agents">
+                                <i class="large circle icon" ng-class="{true: 'green check', false: 'red remove'}[agent.online]"></i>
+                                <label ng-bind="agent.uuid"></label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui row">
+        <div class="sixteen wide column">
+            <ui-view></ui-view>
+        </div>
+    </div>
 </div>
 
 </body>
