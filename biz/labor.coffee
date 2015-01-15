@@ -54,28 +54,52 @@ class Labor
     else
       _entity.task.getForemostTask cb
 
-  execute: (task_id)->
+  execute: (task_id, uuid)->
     return if @isRunning
 
     self = @
     @isRunning = true
+    task = null
+    queue = []
+
+    #获取task
+    queue.push(
+      (done)->
+        self.getTask task_id, (err, result)->
+          task = result
+          done err
+    )
+
+    #如果有指定uuid，则获取该uuid对应的任务
+    queue.push(
+      (done)->
+        return done null if not (uuid and task)
+        cond = uuid: uuid
+        _entity.delivery_server.findOne cond, (err, result)->
+          return done err if err or not result
+          task.delivery_server = result.server
+          task.target = uuid
+          done err
+    )
+
+
+
     #获取最前的一条任务
-    @getTask task_id, (err, task)->
+    _async.waterfall queue, (err)->
       #没有任务了
       if not task
-        _utils.emitRealLog '所有任务都已经完成'
+        message = if task_id then "没有找到可执行的任务" else "所有任务都已经完成"
+        _utils.emitRealLog message
         self.isRunning = false
         return
 
       self.runningTask =  task
       _utils.emitEvent 'task:start', task
 
-#      self.isRunning = false
-#      return;
       #该任务没有找到递送服务器
       if not task.delivery_server
         _utils.emitRealLog(
-          message: '任务没有合法的递送服务器'
+          description: '任务没有合法的递送服务器'
           task: task
           type: 'task'
         )
@@ -86,7 +110,7 @@ class Labor
           self.execute()
 
       _utils.emitRealLog (
-        message: '提取任务#{task.id}执行'
+        description: '提取任务#{task.id}执行'
         task: task
         type: 'task'
         process: 'start'
@@ -96,7 +120,7 @@ class Labor
       self.executeTask task, (err)->
         self.isRunning = false
         _utils.emitRealLog(
-          message: "任务执行完成，成功分发至#{task.delivery_server}"
+          description: "任务执行完成，成功分发至#{task.delivery_server}"
           task: task
           type: 'task'
           process: 'end'

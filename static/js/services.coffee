@@ -17,7 +17,6 @@ define [
 
           #任务完成
           socket.on 'task:stop', (task)->
-            console.log 'stop'
             $rootScope.runningTask = null
             $rootScope.$broadcast 'socket:task:stop', task
           #任务开始
@@ -38,6 +37,10 @@ define [
           getTasks: (params, cb)->
             socket.emit 'getTasks', params, cb
           #执行某条任务
-          runTask: (task_id)-> socket.emit 'runTask', task_id: task_id
+          runTask: (task_id, uuid)->
+            data =
+              task_id: task_id
+              uuid: uuid
+            socket.emit 'runTask', data
         }
   ])

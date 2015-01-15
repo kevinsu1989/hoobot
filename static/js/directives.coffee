@@ -7,6 +7,7 @@ define [
   'ng'
   'utils'
   't!/views.html'
+  'pkg/semantic/semantic'
 ], (_ng, _utils, _template)->
   _ng.module("app.directives", ['app.services', 'app.filters'])
 
@@ -44,10 +45,10 @@ define [
       )
 
       #点击部署
-      scope.onClickDeploy = (event, task)->
+      scope.onClickDeploy = (event, task, uuid)->
         return if $rootScope.runningTask
         $rootScope.runningTask = task
-        SOCKET.runTask task.id
+        SOCKET.runTask task.id, uuid
   ])
 
   #项目列表
@@ -132,4 +133,18 @@ define [
         if data.type in ['command', 'delivery', 'log']
           content =  "#{data.description} -> #{data.task.message}"
           scope.$apply ()-> updateMessage content
+  ])
+
+  .directive('deployAgentDropdown', ['$rootScope', '$filter', 'SOCKET',
+    ($rootScope, $filter, SOCKET)->
+      restrict: 'E'
+      template: _utils.extractTemplate '#tmpl-deploy-agent-dropdown', _template
+      link: (scope, element, attrs)->
+
+  ])
+
+  .directive('dropdownAction', [->
+    restrict: 'A'
+    link: (scope, element, attrs)->
+      element.dropdown()
   ])

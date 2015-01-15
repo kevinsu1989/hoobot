@@ -28,7 +28,7 @@ getTasksRouter = (req)->
 
 #执行指定的任务，仅能在空闲的时候执行任务
 runTaskRouter = (req)->
-  req.io.respond _supervisor.runTask(req.data.task_id)
+  req.io.respond _supervisor.runTask(req.data.task_id, req.data.uuid)
 
 #初始货socket事件
 initSocketEvent = (app)->
