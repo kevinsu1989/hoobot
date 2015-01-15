@@ -30,3 +30,5 @@ exports.schema =
     target: {type: 'string', index: true}
     #任务的类型
     type: {type: 'string', index: true}
+    #最后的执行时间
+    last_execute: 'bigInteger'
