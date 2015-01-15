@@ -12,16 +12,15 @@ exports.execute = (attachment, task, cb)->
   tarFile = attachment.path
   projectName = _utils.extractProjectName task.repos
   targetDir = _path.join _utils.projectDirectory(), projectName
-  console.log tarFile, targetDir
   _fs.ensureDirSync targetDir
 
   command = {
     command: "tar xf #{tarFile} -C #{targetDir}"
     description: "解开tar包到目标项目"
+    task: task
   }
 
-  result = _utils.execCommand command, task
+  _utils.execCommand command, cb
 
   #不管有没有成功，都要删除临时文件，如果没有成功，返回错误信息到分发服务器再行处理
   #_fs.unlinkSync tarFile
-  cb null

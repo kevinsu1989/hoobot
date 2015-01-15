@@ -38,6 +38,8 @@ exports.gitHook = (client, cb)->
 
 #获取任务列表
 exports.getTask = (client, cb)->
+  cond = project_id: client.query.project_id
+  _entity.task.find cond, cb
 
 #获取服务器列表
 exports.getDeliveryServer = (client, cb)->
@@ -82,6 +84,7 @@ exports.deleteDeliveryServer = (client, cb)->
 
 #获取所有的项目列表
 exports.getProject = (client, cb)->
+  _entity.task.getAllProject cb
 
 #强行执行某个任务，一般用于因滚操作
 exports.runTask = (client, cb)->

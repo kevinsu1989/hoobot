@@ -12,17 +12,17 @@ _ = require 'lodash'
 
 _utils = require '../utils'
 _config = require '../config'
+_url = require 'url'
 
 #检测代理服务器是否在工作
 exports.areYouWorking = (server, cb)->
   options =
     json: true
-    url: "#{server}/are-you-working"
+    url: _url.resolve server, "are-you-working"
 
   exports.request options, (err, res, body)->
     return cb err if err
-    data =
-      statusCode: res.statusCode
+    data = statusCode: res.statusCode
 
     if data.statusCode is 200
       data.version = body.version
@@ -44,20 +44,20 @@ exports.deliverProject = (tarfile, task, cb)->
     formData: formData
 
   _utils.emitRealLog(
-    message: '开始分发到服务器'
+    description: "开始分发到服务器#{task.target}"
     task: task
     type: 'delivery'
   )
 
   exports.request options, (err, res, body)->
-    message = '分发完成'
+    description = '分发完成'
     if err
-      message += "，但递送到代理服服务器发生错误"
+      description += "，但递送到代理服服务器发生错误"
     else if res and res.statusCode isnt 200
-      message += "，但服务器返回状态码不正确->#{res.statusCode}"
+      description += "，但服务器返回状态码不正确->#{res.statusCode}"
 
     _utils.emitRealLog(
-      message: '分发完成'
+      description: description
       task: task
       statusCode: res?.statusCode
       error: err

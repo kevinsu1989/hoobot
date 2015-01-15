@@ -17,7 +17,7 @@ exports.init = (cb)->
     exports.update()
     cb? err
 
-exports.realtimeStatus = ()-> _agents
+exports.agentStatus = ()-> _agents
 
 #更新所有服务器的状态
 exports.update = ()->

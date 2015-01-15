@@ -12,10 +12,9 @@ _fs = require 'fs-extra'
 _config = require './config'
 _entity = require './entity'
 _utils = require './utils'
-
-#特殊路由
-specialRouter = (app)->
-  app.get '/', (req, res, next)-> res.sendfile 'static/index.html'
+_supervisor = require './biz/supervisor'
+_status = require './biz/status'
+_api = require './biz/api'
 
 #确保所依赖的命令是否存在
 ensureCommandDepends = ()->
@@ -35,19 +34,10 @@ ensureCommandDepends = ()->
 initBijou = (app)->
   options =
     log: process.env.DEBUG
-    root: '/api/'
-
     #指定数据库链接
     database: _config.database
-    #指定业务逻辑的文件夹
-    biz: './biz'
     #指定路由的配置文件
-    routers: require './routers'
-    #处理之前
-    #onBeforeHandler: (client, req, cb)->
-    #请求访问许可
-    #requestPermission: (client, router, action, cb)->
-
+    routers: []
   _bijou.initalize(app, options)
 
   queue = []
@@ -58,10 +48,6 @@ initBijou = (app)->
       _bijou.scanSchema schema, done
   )
 
-  #如果没有用户，则创建一个root用户
-#  queue.push(
-#    (done)-> initRootMember done
-#  )
 
   _async.waterfall queue, (err)->
     console.log err if err
@@ -70,7 +56,9 @@ initBijou = (app)->
 module.exports = (app)->
   #确定所依赖的命令都存在
   ensureCommandDepends()
-  #处理特殊路由
-  specialRouter app
   #初始化bijou
   initBijou app
+  #初始化路由
+  require('./router').init(app)
+  _supervisor.execute()
+  _status.init()

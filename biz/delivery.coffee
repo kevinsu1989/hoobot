@@ -20,11 +20,11 @@ deliverProject = (source, projectName, task, cb)->
     description: "对文件进行打包"
     task: task
   }
-  success = _utils.execCommand command
-  return cb new Error('文件打包失败') if not success
 
-  #分发到服务器
-  _transport.deliverProject tarFile, task, cb
+  _utils.execCommand command, (err)->
+    return cb err if err
+    #分发到服务器
+    _transport.deliverProject tarFile, task, cb
 
 exports.execute = (task, cb)->
   projectName = _utils.extractProjectName task.repos

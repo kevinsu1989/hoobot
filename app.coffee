@@ -8,15 +8,12 @@ _http = require 'http'
 _app = _express()
 _path = require 'path'
 _redisStore = new require('connect-redis')(_express)
-_coffeeMiddleware = require('coffee-middleware')
 _app.http().io()
 require 'shelljs/global'
 require 'colors'
 
 _utils = require './utils'
 _config = require './config'
-_supervisor = require './biz/supervisor'
-_status = require './biz/status'
 
 _app.configure(()->
   _app.use(_express.methodOverride())
@@ -26,10 +23,12 @@ _app.configure(()->
     keepExtensions: true
   ))
 
-  _app.use(_coffeeMiddleware({
+  _app.use(require('coffee-middleware')({
     src: __dirname + '/static'
-    compress: false
+    compress: true
   }))
+
+  _app.use(require('less-middleware')(__dirname + '/static'))
 
   _app.use(_express.cookieParser())
   _app.use(_express.session(
@@ -46,19 +45,7 @@ _app.configure(()->
   _app.set 'port', _config.port.delivery || 1518
 )
 
-#链接后的处理
-_app.io.route 'ready', (req)->
-  text = "hi, 我就是机器人Hoobot了，现在的服务器工作看起来是正常滴"
-  _utils.emitRealLog text, 'green'
-  req.io.emit 'status', _status.realtimeStatus()
-
-_utils.onRealLog (data)-> _app.io.broadcast('realtime', data)
-
 require('./initialize')(_app)
 
 _app.listen _app.get 'port'
 console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
-
-#执行任务
-#_supervisor.execute()
-_status.init()
