@@ -11,22 +11,24 @@ define [
   _ng.module('app.services', [])
   .factory('SOCKET', ['$rootScope',
       ($rootScope)->
+        updateRunningTask = (data)->
+          return if data.type isnt 'task'
+          console.log data.process
+          switch data.process
+            when 'end' then $rootScope.runningTask = null
+            when 'stop' then $rootScope.runningTask = data.task
+
         socket = _io.connect()
         socket.on 'connect', ->
           socket.emit 'ready'
 
-          #任务完成
-          socket.on 'task:stop', (task)->
-            $rootScope.runningTask = null
-            $rootScope.$broadcast 'socket:task:stop', task
-          #任务开始
-          socket.on 'task:start', (task)->
-            $rootScope.runningTask = task
-            $rootScope.$broadcast 'socket:task:start', task
+          socket.on 'stream', (data)-> $rootScope.$broadcast 'socket:stream', data
           #服务器主动推送状态信息
           socket.on 'agent:status', (data)-> $rootScope.$broadcast 'socket:agent:status', data
           #实时的日志消息
-          socket.on 'realtime', (data)->$rootScope.$broadcast 'socket:realtime', data
+          socket.on 'realtime', (data)->
+            updateRunningTask data
+            $rootScope.$broadcast 'socket:realtime', data
 
         {
           #获取代理服务器的状态

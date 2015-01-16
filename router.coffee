@@ -39,6 +39,7 @@ initSocketEvent = (app)->
     'agent:status'
     'task:start'
     'task:stop'
+    'stream'
   ]
 
   _.map events, (item)->

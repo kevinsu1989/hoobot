@@ -46,3 +46,9 @@ define [
         when 99 then 'error'
         else 'warning'
   )
+
+  .filter('projectName', ->
+    (repos)->
+      return '' if not repos
+      repos.replace(/.+\/(.+)\.git$/, '$1')
+  )

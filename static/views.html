@@ -119,7 +119,7 @@
              <tr ng-repeat="project in projects"
                  ng-click="onClickProjectItem($event, project)"
                  ng-class="{active: project.project_id == currentProjectId, error: project.status != 10 && project.status != 1}">
-                 <td>{{project.project_id}}</td>
+                 <td>{{project.repos | projectName}}</td>
                  <td>{{project.message}}</td>
                  <td>{{project.status | taskStatus}}</td>
              </tr>
@@ -128,8 +128,22 @@
     </textarea>
 
     <textarea id="tmpl-realtime">
-      <div class="realtime">
-          <realtime-log></realtime-log>
+      <div class="custom-realtime ui grid" realtime-log>
+          <div class="ui row" ng-show="running">
+              <div class="eight wide column custom-overview">
+                  <h3>摘要</h3>
+                  <div class="custom-content"></div>
+              </div>
+              <div class="eight wide column custom-stream">
+                  <h3>实时日志</h3>
+                  <div class="custom-content"></div>
+              </div>
+          </div>
+          <div class="ui row custom-idle" ng-hide="running">
+              <div class="sixteen wide column">
+                没有运行任何任务
+              </div>
+          </div>
       </div>
     </textarea>
 </div>

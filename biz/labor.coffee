@@ -35,7 +35,7 @@ class Labor
 
     _async.waterfall queue, (err)->
       task.status = if err then _enum.Failure else _enum.Success
-      self.finishTask task, cb
+      self.finishTask task, (otherErr)-> cb(err || otherErr)
 
   #完成任务的操作
   finishTask: (task, cb)->
@@ -110,7 +110,7 @@ class Labor
           self.execute()
 
       _utils.emitRealLog (
-        description: '提取任务#{task.id}执行'
+        description: "提取任务执行"
         task: task
         type: 'task'
         process: 'start'
@@ -119,10 +119,21 @@ class Labor
       #执行任务
       self.executeTask task, (err)->
         self.isRunning = false
+        if err
+          description = "任务执行失败"
+          errData =
+            content: err
+            type: 'stderr'
+
+          _utils.emitEvent 'stream', errData
+        else
+          description = "任务执行完成，成功分发至#{task.delivery_server}"
+
         _utils.emitRealLog(
-          description: "任务执行完成，成功分发至#{task.delivery_server}"
+          description: description
           task: task
           type: 'task'
+          success: !err
           process: 'end'
           error: err
         )

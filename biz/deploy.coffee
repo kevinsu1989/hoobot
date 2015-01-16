@@ -20,7 +20,7 @@ exports.execute = (attachment, task, cb)->
     task: task
   }
 
-  _utils.execCommand command, cb
-
-  #不管有没有成功，都要删除临时文件，如果没有成功，返回错误信息到分发服务器再行处理
-  #_fs.unlinkSync tarFile
+  _utils.execCommand command, (err)->
+    #不管有没有成功，都要删除临时文件，如果没有成功，返回错误信息到分发服务器再行处理
+    _fs.unlinkSync tarFile
+    cb err

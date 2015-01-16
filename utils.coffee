@@ -6,7 +6,7 @@ _path = require 'path'
 _fs = require 'fs-extra'
 _async = require 'async'
 _events = require 'events'
-
+_Convert = require('ansi-to-html')
 _config = require './config'
 
 _realEvent = new _events.EventEmitter()
@@ -66,17 +66,33 @@ exports.cleanTarget = (target)->
 
 #批量执行命令，遇到问题即返回
 exports.execCommand = (command, cb)->
-  exec command.command, async: true, (err)->
+  child = require('child_process')
+  options =
+    env: process.env
+    maxBuffer: 20*1024*1024
+
+  exec = child.exec command.command, options
+
+  exec.on 'close', (code)->
     data =
       command: command.command
-      success: !!err
+      success: code is 0
       type: 'command'
       task: command.task
       description: command.description
 
     #推送实时的日志
     exports.emitRealLog data
-    cb err, true
+    cb null, true
+
+  convert = new _Convert()
+  exec.stdout.on 'data',  (message)->
+    data = type: 'stdout', content: convert.toHtml(message)
+    exports.emitEvent 'stream', data
+
+  exec.stderr.on 'data', (message)->
+    data = type: 'stderr', content: convert.toHtml(message)
+    exports.emitEvent 'stream', data
 
 #从git commit message中提取指令
 exports.extractCommandFromGitMessage = (message)->

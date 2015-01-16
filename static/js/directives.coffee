@@ -24,7 +24,7 @@ define [
   ])
 
   #任务列表tmpl-task-list
-  .directive('taskList', ['$rootScope', 'SOCKET', ($rootScope, SOCKET)->
+  .directive('taskList', ['$rootScope', '$state', 'SOCKET', ($rootScope, $state, SOCKET)->
     restrict: 'E'
     replace: false
     template: _utils.extractTemplate '#tmpl-task-list', _template
@@ -48,6 +48,8 @@ define [
       scope.onClickDeploy = (event, task, uuid)->
         return if $rootScope.runningTask
         $rootScope.runningTask = task
+
+        $state.go 'realtime', task_id: task.id
         SOCKET.runTask task.id, uuid
   ])
 
@@ -67,29 +69,41 @@ define [
   ])
 
   #实时的日志
-  .directive('realtimeLog', ['SOCKET', (SOCKET)->
-    restrict: 'E'
+  .directive('realtimeLog', ['$state', 'SOCKET', ($state, SOCKET)->
+    restrict: 'A'
     replace: false
     link: (scope, element, attrs)->
-
-      analyseEvent = (data) ->
-        html = ""
-        html += data.message
-        html
+      $overview = element.find('div.custom-overview .custom-content')
+      $stream = element.find('div.custom-stream .custom-content')
+      $streamContainer = element.find('div.custom-stream')
+      scope.running = false
 
       #渲染服务器返回来的日志
       render = (data) ->
         $current = $("<div />")
-        element.append $current
-        html = new Date() + ": "
-        if typeof (data) is "string"
-          html += data
-        else
-          html += analyseEvent(data)
-        $current.html html
-        return
+        $overview.append $current
+        text = if typeof (data) is "string" then data else data.description
+        $current.html "#{new Date()}: #{text}"
+        #发生错误
+        if data.type is 'task' and data.process is 'end' and not data.success
+          $overview.css 'color', 'red'
 
-      scope.$on 'socket:realtime', (event, data)-> render data
+        writeStream(content: text)
+
+      writeStream = (data)->
+        text = if typeof data.content is 'object' then JSON.stringify(data.content)  else data.content
+        html = "<div class='custom-row'>#{text}</div>"
+        $stream.append html
+
+      scope.$on 'socket:realtime', (event, data)->
+        scope.running = true
+        render data
+
+      scope.$on 'socket:stream', (event, data)->
+        text = if typeof data.content is 'object' then JSON.stringify(data.content)  else data.content
+        html = "<div class='custom-row'>#{text}</div>"
+        $stream.append html
+        $stream.animate({scrollTop: $streamContainer.height()},'slow');
   ])
 
 
@@ -120,14 +134,9 @@ define [
 
       updateMessage defaultMessage
 
-      $rootScope.$on 'socket:task:start', (event, task)->
-        scope.$apply ()-> updateMessage "执行新的任务 -> #{task.message}"
-
-      $rootScope.$on 'socket:task:stop', (event, task)->
-        type = $filter('taskStatusType')(task.status)
-        result = $filter('taskStatus')(task.status)
-        content = "任务执行完成，执行结果：#{result} -> #{task.message}"
-        scope.$apply ()-> updateMessage content, type
+      scope.onClickClose = ()->
+        element.animate({marginTop: "-#{element.outerHeight()}px"})
+        return
 
       $rootScope.$on 'socket:realtime', (event, data)->
         if data.type in ['command', 'delivery', 'log']

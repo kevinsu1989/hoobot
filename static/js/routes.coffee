@@ -29,9 +29,8 @@ define [
       )
 
       .state('realtime',
-        url: '/realtime'
+        url: '/realtime?task_id'
         template: _utils.extractTemplate('#tmpl-realtime', _template)
         controller: 'realtimeController'
       )
-
   ])

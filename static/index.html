@@ -12,7 +12,7 @@
 <body>
 
 <div class="ui icon message custom-message" quickly-message ng-class="message.type">
-    <i class="close icon"></i>
+    <i class="close icon" ng-click="onClickClose()"></i>
     <i class="notched alarm icon"></i>
     <div class="content">
         <p ng-bind="message.content"></p>
@@ -24,7 +24,7 @@
         <div class="sixteen wide column">
             <div class="ui secondary  menu">
                 <a class="item" href="/" ng-class="{active: activeMenu == 'task'}">
-                    <i class="tasks large blue icon"></i>任务
+                    <i class="tasks large blue icon"></i>预览
                 </a>
                 <a class="item" href="/realtime" ng-class="{active: activeMenu == 'realtime'}">
                     <i class="wait large icon"></i>实时日志
