@@ -121,6 +121,7 @@ exports.deliverProject = (tarfile, task, cb)->
 #请求服务器
 exports.request = (options, cb)->
   defaultOptions =
+    timeout: 1000 * 5
     method: 'GET'
 
   ops = _.extend defaultOptions, options

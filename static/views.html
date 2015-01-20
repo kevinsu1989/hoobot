@@ -146,4 +146,98 @@
           </div>
       </div>
     </textarea>
+
+    <!--发布版本的项目列表-->
+    <textarea id="tmpl-release-project-list">
+         <table class="ui celled structured table custom-release-project-list">
+             <thead>
+             <tr>
+                 <th class="three wide column">项目名称</th>
+                 <th class="five wide column">Token</th>
+                 <th>git地址</th>
+             </tr>
+             </thead>
+             <tbody>
+             <tr ng-repeat="project in projects"
+                 ng-class="{error: !project.online}"
+                 ng-click="onClickProject($event, project)">
+                 <td>{{project.repos_name}}</td>
+                 <td>{{project.token}}</td>
+                 <td>
+                     {{project.repos_git}}
+                     <div class="ui small icon buttons right floated">
+                         <div class="ui button red left" ng-click="onClickRemove($event, project)" title="删除项目"><i class="remove icon"></i></div>
+                         <div class="ui button blue right" ng-click="onClickEdit($event, project)" title="编辑项目"><i class="edit icon"></i></div>
+                         <div class="ui button green right" ng-click="onClickRefresh($event, project)" title="刷新Tag列表"><i class="refresh icon"></i></div>
+                     </div>
+                 </td>
+             </tr>
+             </tbody>
+         </table>
+    </textarea>
+
+    <!--发布的主界面-->
+    <textarea id="tmpl-release">
+        <div class="custom-release ui grid">
+            <div class="ui row">
+                <div class="eight wide column">
+                    <release-project-list></release-project-list>
+                    <div class="ui row center aligned" style="text-align: right">
+                        <div class="green ui button" ng-click="onClickEdit($event)">
+                            <i class="add icon"></i>
+                            添加新项目
+                        </div>
+                    </div>
+                </div>
+                <div class="eight wide column">
+                    <release-tag-list></release-tag-list>
+                </div>
+            </div>
+        </div>
+    </textarea>
+
+    <!--标签列表-->
+    <textarea id="tmpl-release-tag-list">
+        <div>
+            <table class="ui celled structured table custom-release-project-list" ng-show="tags.success && tags.items.length > 0">
+                <thead>
+                <tr>
+                    <th class="three wide column">Tag</th>
+                    <th class="four wide column">Hash</th>
+                    <th class="six wide column">Message</th>
+                    <th class="three wid column">控制</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="tag in tags.items">
+                        <td>
+                            {{tag.name}}
+                        </td>
+                        <td>
+                            {{tag.hash | limitTo: 20}}
+                        </td>
+                        <td>
+                            {{tag.message}}
+                        </td>
+                        <td class="center aligned">
+                            <div class="ui teal button" ng-click="onClickDeploy($event, tag)">部署</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div ng-show="!tags.success || tags.items.length == 0">
+                <div class="ui info message" ng-show="tags.success">
+                    <p>没有检查到可用的标签，请刷新标签，或者检查配置是否错误</p>
+                </div>
+
+                <div class="ui negative message" ng-show="tags.error">
+                    <div class="header">
+                        似乎有一些错误发错了，详细的信息如下：
+                    </div>
+                    <p>{{tags.error | json}}</p>
+                </div>
+            </div>
+        </div>
+    </textarea>
 </div>

@@ -36,3 +36,8 @@ define [
     ($rootScope, $scope, SOCKET)->
       $rootScope.activeMenu = 'realtime'
   ])
+
+  .controller('releaseProjectListController', ['$rootScope', '$scope', 'SOCKET',
+      ($rootScope, $scope, SOCKET)->
+        $rootScope.activeMenu = 'release'
+  ])

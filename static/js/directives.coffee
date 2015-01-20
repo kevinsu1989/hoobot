@@ -7,7 +7,7 @@ define [
   'ng'
   'utils'
   't!/views.html'
-  'pkg/semantic/semantic'
+  'pkg/semantic/semantic.min'
 ], (_ng, _utils, _template)->
   _ng.module("app.directives", ['app.services', 'app.filters'])
 
@@ -62,7 +62,8 @@ define [
       scope.onClickProjectItem = (event, project)->
         scope.currentProjectId = project.project_id
 
-      SOCKET.allProject (data)->
+      cond = type: 'preview'
+      SOCKET.getProjects cond, (data)->
         scope.projects = data
         scope.currentProjectId = data[0].project_id if data.length > 0
         scope.$apply()
@@ -156,4 +157,102 @@ define [
     restrict: 'A'
     link: (scope, element, attrs)->
       element.dropdown()
+  ])
+
+  .directive('releaseProjectList', ['$rootScope', 'SOCKET', ($rootScope, SOCKET)->
+    restrict: 'E'
+    replace: true
+    template: _utils.extractTemplate '#tmpl-release-project-list', _template
+    link: (scope, element, attrs)->
+
+      scope.onClickEdit = (event, project)->
+        event.stopPropagation()
+        $rootScope.$broadcast 'project:editor:show', project
+
+      scope.onClickRemove = (event, project)->
+        event.stopPropagation()
+        return if not confirm("您确定要删除这个项目吗？")
+        SOCKET.removeProject project.id, (err)-> loadProject()
+
+      #强制刷新标签
+      scope.onClickRefresh = (event, project)->
+        event.stopPropagation()
+        $rootScope.$broadcast 'dimmer:show'
+        SOCKET.refreshTag project.id, ->
+          loadProject()
+          $rootScope.$broadcast 'dimmer:hide'
+
+      #加载项目
+      scope.onClickProject = (event, project)->
+        event.stopPropagation()
+        scope.currentReleaseProjectId = project.id
+
+      loadProject = ()->
+        cond = type: 'release'
+        SOCKET.getProjects cond, (result)->
+          scope.projects = result
+          scope.currentReleaseProjectId = result[0].id
+          scope.$apply()
+
+      loadProject()
+
+      $rootScope.$on 'project:list:reload', (event)-> loadProject()
+  ])
+
+  .directive('releaseProjectEditor', ['$rootScope', 'SOCKET', ($rootScope, SOCKET)->
+    restrict: 'A'
+    replace: false
+    link: (scope, element, attrs)->
+      scope.project = {}
+
+      #收到打开编辑器的请求
+      scope.$on 'project:editor:show', (event, project)->
+        scope.project = project || {}
+        element.modal('setting', {
+          'closable': false
+          onApprove: -> false
+        }).modal('show')
+
+      scope.onClickSave = (event)->
+        return alert('Token必需添加，否无法获取Tag列表') if not scope.project.token
+        return alert('项目名称必需添加') if not scope.project.repos_name
+        return alert('仓库地址必需添加') if not scope.project.repos_git
+
+        SOCKET.saveProject scope.project, ()->
+          alert('保存成功')
+          element.modal('hide')
+          $rootScope.$broadcast 'project:list:reload'
+          #发送重新加载项目列表的消息
+  ])
+
+  #获取发布的tag列表
+  .directive('releaseTagList', ['$rootScope', 'SOCKET', ($rootScope, SOCKET)->
+    restrict: 'E'
+    replace: true
+    template: _utils.extractTemplate('#tmpl-release-tag-list', _template)
+    link: (scope, element, attrs)->
+
+      #加载所有标签
+      loadTags = (project_id)->
+        SOCKET.getTags project_id, (result)->
+          scope.tags = result
+          scope.$apply()
+
+      scope.onClickDeploy = (event, item)->
+        alert("正式部署这个功能还没有做")
+
+      scope.$watch 'currentReleaseProjectId', ()->
+        return if not scope.currentReleaseProjectId
+        loadTags scope.currentReleaseProjectId
+  ])
+
+  .directive('dimmer', [->
+    restrict: 'A'
+    replace: true
+    link: (scope, element, attrs)->
+      #显示
+      scope.$on 'dimmer:show', (message = 'Processing')->
+        element.dimmer('show', {closable: false})
+
+      scope.$on 'dimmer:hide', -> element.dimmer 'hide'
   ])

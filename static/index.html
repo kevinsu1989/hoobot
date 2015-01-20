@@ -24,7 +24,7 @@
         <div class="sixteen wide column">
             <div class="ui secondary  menu">
                 <a class="item" href="/" ng-class="{active: activeMenu == 'task'}">
-                    <i class="tasks large blue icon"></i>预览
+                    <i class="tasks large icon"></i>预览
                 </a>
                 <a class="item" href="/realtime" ng-class="{active: activeMenu == 'realtime'}">
                     <i class="wait large icon"></i>实时日志
@@ -32,7 +32,9 @@
                 <a class="item" href="/agent" ng-class="{active: activeMenu == 'agent'}">
                     <i class="database large icon"></i>代理状态
                 </a>
-
+                <a class="item" href="/release" ng-class="{active: activeMenu == 'release'}">
+                    <i class="send large icon"></i>发布
+                </a>
                 <div class="right menu">
                     <div class="item active">
                         <ul class="ui horizontal list custom-agent-status" agent-status>
@@ -55,6 +57,37 @@
             <ui-view></ui-view>
         </div>
     </div>
+</div>
+
+<div class="ui small modal" release-project-editor>
+    <i class="close icon"></i>
+    <div class="header">
+        添加新项目
+    </div>
+    <div class="content">
+        <form class="ui form">
+            <div class="field">
+                <label>项目名称</label>
+                <input type="text" ng-model="project.repos_name">
+            </div>
+            <div class="field">
+                <label>仓库地址</label>
+                <input type="text" ng-model="project.repos_git">
+            </div>
+            <div class="field">
+                <label>Token</label>
+                <input type="text" ng-model="project.token">
+            </div>
+        </form>
+    </div>
+    <div class="actions">
+        <div class="default close ui button">取消</div>
+        <div class="primary approve ui button" ng-click="onClickSave($event)">保存</div>
+    </div>
+</div>
+
+<div class="ui page dimmer" id="fullscreen" dimmer>
+    <div class="ui text loader">Processing</div>
 </div>
 
 </body>
