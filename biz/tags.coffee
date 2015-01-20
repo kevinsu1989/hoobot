@@ -83,7 +83,7 @@ exports.getTags = (project_id)->
 exports.init = (cb)->
   _entity.project.find {}, (err, projects)->
     return cb?() if err or not projects
-    
+
     index = 0
     _async.whilst(
       -> index < projects.length
