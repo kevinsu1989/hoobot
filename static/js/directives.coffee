@@ -191,7 +191,7 @@ define [
         cond = type: 'release'
         SOCKET.getProjects cond, (result)->
           scope.projects = result
-          return if result?.length < 0
+          return if not (result and result.length > 0)
           scope.currentReleaseProjectId = result[0].id
           scope.$apply()
 
