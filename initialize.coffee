@@ -15,6 +15,7 @@ _utils = require './utils'
 _supervisor = require './biz/supervisor'
 _status = require './biz/status'
 _api = require './biz/api'
+_tags = require './biz/tags'
 
 #确保所依赖的命令是否存在
 ensureCommandDepends = ()->
@@ -62,3 +63,4 @@ module.exports = (app)->
   require('./router').init(app)
   _supervisor.execute()
   _status.init()
+  _tags.init()

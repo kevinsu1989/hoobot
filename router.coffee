@@ -9,6 +9,7 @@ _api = require './biz/api'
 _utils = require './utils'
 _supervisor = require './biz/supervisor'
 _status = require './biz/status'
+_tags = require('./biz/tags')
 
 #git hook的路由
 gitHookRoute = (req, res, next)->
@@ -20,8 +21,8 @@ hoobotStatusRouter = (req)->
   req.io.respond running: true
 
 #获取所有项目数据
-getProjectsRouter = (req)->
-  _api.getProject (err, data)-> req.io.respond data
+getPreviewProjectRouter = (req)->
+  _api.getPreviewProject (err, data)-> req.io.respond data
 
 getTasksRouter = (req)->
   _api.getTask req.data, (err, tasks)-> req.io.respond tasks
@@ -29,6 +30,30 @@ getTasksRouter = (req)->
 #执行指定的任务，仅能在空闲的时候执行任务
 runTaskRouter = (req)->
   req.io.respond _supervisor.runTask(req.data.task_id, req.data.uuid)
+
+#获取所有的项目
+getProjectsRouter = (req)->
+  _api.getProject req.data, (err, result )->
+    req.io.respond result
+
+saveProjectRouter = (req)->
+  _api.saveProject req.data, (err, result)->
+    req.io.respond result
+
+#获取所有标签
+getTagsRouter = (req)->
+  req.io.respond _tags.getTags(req.data.project_id)
+
+refreshTagRouter = (req)->
+  console.log 'abc'
+  _tags.refreshTag req.data.project_id, (err, result)->
+    console.log 'abd'
+    req.io.respond err, result
+
+#删除项目的路由
+removeProjectRouter = (req)->
+  _api.removeProject req.data.project_id, (err)->
+    req.io.respond()
 
 #初始货socket事件
 initSocketEvent = (app)->
@@ -50,19 +75,26 @@ initSocketEvent = (app)->
 
 
 exports.init = (app)->
+
   initSocketEvent(app)
   #hoobot的当前状态
   app.io.route 'getHoobotStatus', hoobotStatusRouter
   #代理服务器的状态
   app.io.route 'getAgentStatus', (req)-> req.io.respond _status.agentStatus()
   #获取汇总后的信息
-  app.io.route 'getProjects', getProjectsRouter
+  app.io.route 'getPreviewProject', getPreviewProjectRouter
   #获取所有任务
   app.io.route 'getTasks', getTasksRouter
   #获取正在运行的任务
   app.io.route 'getRunningTask', (req)-> req.io.respond _supervisor.runningTask()
   #执行任务
   app.io.route 'runTask', runTaskRouter
+  app.io.route 'getProjects', getProjectsRouter
+  app.io.route 'saveProject', saveProjectRouter
+  app.io.route 'getTags', getTagsRouter
+  app.io.route 'refreshTag', refreshTagRouter
+  app.io.route 'removeProject', removeProjectRouter
+
   #常规http的路由
   app.post '/api/git/commit', gitHookRoute
   app.get /(\/\w+)?$/, (req, res, next)-> res.sendfile 'static/index.html'

@@ -33,4 +33,10 @@ define [
         template: _utils.extractTemplate('#tmpl-realtime', _template)
         controller: 'realtimeController'
       )
+
+      .state('release',
+        url: '/release'
+        template: _utils.extractTemplate('#tmpl-release', _template)
+        controller: 'releaseProjectListController'
+      )
   ])

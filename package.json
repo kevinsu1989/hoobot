@@ -1,9 +1,10 @@
 {
   "name": "hoobot",
-  "version": "0.0.20150115",
+  "version": "0.0.20150120",
   "dependencies": {
     "async": "^0.9.0",
     "bijou": "0.0.9",
+    "cheerio": "^0.18.0",
     "coffee-middleware": "^0.2.1",
     "coffee-script": "^1.8.0",
     "colors": "^1.0.3",
@@ -11,6 +12,7 @@
     "express": "^4.10.6",
     "express.io": "^1.1.13",
     "fs-extra": "^0.13.0",
+    "gitlab": "^1.2.0",
     "less-middleware": "^1.0.4",
     "lodash": "^2.4.1",
     "mysql": "^2.5.4",

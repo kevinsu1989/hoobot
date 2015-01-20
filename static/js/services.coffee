@@ -34,15 +34,29 @@ define [
           #获取代理服务器的状态
           agentStatus: (cb)-> socket.emit 'getAgentStatus', cb
           #所有的项目
-          allProject: (cb)-> socket.emit 'getProjects', cb
+          getPreviewProject: (cb)-> socket.emit 'getPreviewProject', cb
+          #获取项目信息
+          getProjects: (cond, cb)-> socket.emit 'getProjects', cond,  cb
           #获取所有的任务
           getTasks: (params, cb)->
             socket.emit 'getTasks', params, cb
+          saveProject: (data, cb)->
+            socket.emit 'saveProject', data, cb
           #执行某条任务
           runTask: (task_id, uuid)->
             data =
               task_id: task_id
               uuid: uuid
             socket.emit 'runTask', data
+
+          #删除某个项目
+          removeProject: (project_id, cb)->
+            socket.emit 'removeProject', project_id: project_id, cb
+          #强制刷新标签
+          refreshTag: (project_id, cb)->
+            socket.emit 'refreshTag', project_id: project_id, cb
+          #获取所有的标签
+          getTags: (project_id, cb)->
+            socket.emit 'getTags', project_id: project_id, cb
         }
   ])

@@ -4,12 +4,14 @@
 #    Description: 处理githook
 _async = require 'async'
 _http = require('bijou').http
+_ = require 'lodash'
 
 _entity = require '../entity'
 _githook = require './githook'
 _supervisor = require './supervisor'
 _utils = require '../utils'
 _deploy = require './deploy'
+_tags = require './tags'
 
 exports.postOnly = (client, cb)->
   console.log 'abc'
@@ -77,5 +79,26 @@ exports.deleteDeliveryServer = (id, cb)->
   _entity.removeById id, cb
 
 #获取所有的项目列表
-exports.getProject = (cb)->
+exports.getPreviewProject = (cb)->
   _entity.task.getAllProject cb
+
+#保存项目信息
+exports.saveProject = (data, cb)->
+  _entity.project.save data, cb
+
+#删除项目信息
+exports.removeProject = (id, cb)->
+  _entity.project.removeById id, cb
+
+exports.getProject = (cond, cb)->
+  cond = cond || {}
+  if cond.type is 'preview'
+    return exports.getPreviewProject(cb)
+
+  _entity.project.fetch cond, (err, result)->
+    _.map result, (item)->
+      cache = _tags.getTags(item.id)
+      item.online = cache?.success
+      item.error = cache?.error
+
+    cb err, result
