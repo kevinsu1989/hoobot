@@ -82,7 +82,8 @@ exports.getTags = (project_id)->
 #初始化，获取所有项目的标签
 exports.init = (cb)->
   _entity.project.find {}, (err, projects)->
-
+    return cb?() if err or not projects
+    
     index = 0
     _async.whilst(
       -> index < projects.length
