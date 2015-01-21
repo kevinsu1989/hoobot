@@ -18,7 +18,7 @@ class GitLabInterface
       token: token
 
   #根据repose查找到gitlab中对应的repos_id
-  findTagsOnGitlab: (sshGit, cb)->
+  findTagsOnGitlab: (project_id, sshGit, cb)->
     self = @
     #获取所有的git项目
     self.gitlab.projects.all (projects)->
@@ -30,11 +30,15 @@ class GitLabInterface
       self.gitlab.projects.repository.listTags project.id, (tags)->
         result = []
         _.map tags.splice(0, 9).reverse(), (tag)->
-          result.push(
-            name: tag.name,
-            hash: tag.commit.id,
-            message: tag.commit.message
-          )
+          tag.project_id = project_id
+          result.push tag
+
+#        _.map tags.splice(0, 9).reverse(), (tag)->
+#          result.push(
+#            name: tag.name,
+#            hash: tag.commit.id,
+#            message: tag.commit.message
+#          )
 
         cb null, result
 
@@ -60,7 +64,7 @@ exports.refreshTag = (project_id, cb)->
   queue.push(
     (done)->
       gli = new GitLabInterface(token)
-      gli.findTagsOnGitlab sshGit, (err, result)->
+      gli.findTagsOnGitlab project_id, sshGit, (err, result)->
         tags = result
         done err
   )

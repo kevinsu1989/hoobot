@@ -11,7 +11,7 @@ _fs = require 'fs-extra'
 exports.execute = (attachment, task, cb)->
   tarFile = attachment.path
   projectName = _utils.extractProjectName task.repos
-  targetDir = _path.join _utils.projectDirectory(), projectName
+  targetDir = _path.join _utils.previewDirectory(), projectName
   _fs.ensureDirSync targetDir
 
   command = {

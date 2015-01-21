@@ -9,23 +9,23 @@ _fs = require 'fs-extra'
 
 _utils = require '../utils'
 
-#获取代码并签出，不使用pull的原因是避免文件被意外改动pull不成功，直接clone
-cloneAndBuild = (task, cb)->
+#执行构建
+exports.execute = (task, cb)->
   projectName =  _utils.extractProjectName(task.repos)
   #本地仓库的目录
   reposProjectDir = _utils.reposDireectory projectName
   #构建的目标目录
   buildTarget = _utils.buildDireectory projectName
-#  _utils.cleanTarget reposProjectDir
+  #  _utils.cleanTarget reposProjectDir
 
   #检查本地仓库是否存在，如果存在，则使用fetch
   if _fs.existsSync reposProjectDir
     console.log reposProjectDir
     items = [{
-        command: "cd #{reposProjectDir} && git fetch origin"
-        description: "拉取远程仓库"
-        task: task
-      }]
+      command: "cd #{reposProjectDir} && git fetch origin"
+      description: "拉取远程仓库"
+      task: task
+    }]
   else
     items = [{
       command: "git clone #{task.repos} #{reposProjectDir}"
@@ -60,7 +60,3 @@ cloneAndBuild = (task, cb)->
       _utils.execCommand item, done
     ), cb
   )
-
-#执行构建
-exports.execute = (task, cb)->
-  cloneAndBuild task, cb

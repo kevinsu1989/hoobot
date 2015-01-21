@@ -78,9 +78,6 @@ exports.saveDeliveryServer = (data, cb)->
 exports.deleteDeliveryServer = (id, cb)->
   _entity.removeById id, cb
 
-#获取所有的项目列表
-exports.getPreviewProject = (cb)->
-  _entity.task.getAllProject cb
 
 #保存项目信息
 exports.saveProject = (data, cb)->
@@ -92,8 +89,7 @@ exports.removeProject = (id, cb)->
 
 exports.getProject = (cond, cb)->
   cond = cond || {}
-  if cond.type is 'preview'
-    return exports.getPreviewProject(cb)
+  return _entity.task.getAllProject cb if cond.type is 'preview'
 
   _entity.project.fetch cond, (err, result)->
     _.map result, (item)->

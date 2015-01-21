@@ -70,15 +70,18 @@ class Task extends _BaseEntity
                       FROM
                           task X
                       WHERE
-                          X.project_id = A.project_id
+                        X.project_id = A.project_id
+                            AND X.type = 'preview'
                       ORDER BY X.status DESC , X.timestamp DESC
                       LIMIT 1) AS task_id
           FROM
               task A
+          WHERE
+              A.type = 'preview'
           GROUP BY project_id) B
               LEFT JOIN
           task C ON B.task_id = C.id
-      ORDER BY C.timestamp DESC"
+      ORDER BY C.last_execute ASC"
 
     @execute sql, cb
 

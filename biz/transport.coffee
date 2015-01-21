@@ -26,7 +26,7 @@ exports.areYouWorking = (server, cb)->
 
     if data.statusCode is 200
       data.version = body.version
-      data.projectDirectory = body.projectDirectory
+      data.previewDirectory = body.previewDirectory
 
     cb err, data
 

@@ -48,8 +48,8 @@ exports.buildDireectory = (projectName)-> _path.join(exports.tempDirectory(), 'b
 exports.projectPackagePath = (projectName)-> _path.join(exports.tempDirectory(), 'tar', projectName + '.tar')
 
 #获取项目的工作目录
-exports.projectDirectory = ->
-  _path.resolve __dirname, _config.projectDirectory
+exports.previewDirectory = ->
+  _path.resolve __dirname, _config.previewDirectory
 
 #获取svn的工作目录
 exports.svnDirectory = ->

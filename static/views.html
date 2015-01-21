@@ -30,7 +30,7 @@
                         {{agent.info.version}}
                     </td>
                     <td>
-                        {{agent.info.projectDirectory}}
+                        {{agent.info.previewDirectory}}
                     </td>
                     <td data-time-ago="{{agent.timestamp}}">
                     </td>
@@ -214,10 +214,10 @@
                             {{tag.name}}
                         </td>
                         <td>
-                            {{tag.hash | limitTo: 20}}
+                            {{tag.commit.id | limitTo: 20}}
                         </td>
                         <td>
-                            {{tag.message}}
+                            {{tag.commit.message}}
                         </td>
                         <td class="center aligned">
                             <div class="ui teal button" ng-click="onClickDeploy($event, tag)">部署</div>

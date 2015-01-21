@@ -59,7 +59,7 @@ _app.post('/', (req, res, next)->
 _app.get('/are-you-working', (req, res, next)->
   data =
     version: require('./package.json').version
-    projectDirectory: _config.projectDirectory
+    previewDirectory: _config.previewDirectory
   _http.responseJSON null, data, res
 )
 

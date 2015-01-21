@@ -11,7 +11,7 @@ _enum = require '../enumerate'
 _bhfProxy = require './bhf-proxy'
 
 #保存单条任务
-insertTask = (task, cb)->
+insertTask = exports.insertTask = (task, cb)->
   queue = []
 
   # 将相同项目的status为created都改掉，
@@ -44,7 +44,11 @@ bulkInsertTasks = (tasks, cb)->
     (
       (done)->
         task = tasks[index++]
-        _entity.task.exists hash: task.hash, (err, exists)->
+        cond =
+          hash: task.hash
+          type: 'preview'
+
+        _entity.task.exists cond, (err, exists)->
           #存在或者错误都不再继续
           return done err if err or exists
           #保存任务
@@ -63,7 +67,7 @@ analysePushEvent = (data)->
     branch = data.ref.replace(/^refs\/heads\/(.+)$/i, '$1')
 
     result.push(
-      type: extract.type
+      type: 'preview'
       target: extract.target
       url: commit.url
       email: commit.author.email
@@ -84,21 +88,39 @@ exports.execute = (data, cb)->
   tasks = analysePushEvent(data)
   return cb null if tasks.length is 0
 
+  project_id = 0
   queue = []
-  #从bhf上获取git地址对应的项目id
+  #根据git地址，获取对应的项目，如果没有项目存在，则插入新的项目
   queue.push(
     (done)->
-      _bhfProxy.findProjectWithGit data.repository.url, (err, result)->
+      cond = repos_git: data.repository.url
+      _entity.project.findOne cond, (err, result)->
         return done err if err
+        project_id = result.id if result
+        done err
+  )
 
-        project_id = (result and result.length > 0 and result[0].id) || -1
-        _.map tasks, (task)-> task.project_id = project_id
+  #如果还没有项目，则创建一个项目
+  queue.push(
+    (done)->
+      return done null if project_id
+
+      projectData =
+        repos_git: data.repository.url
+        repos_url: data.repository.homepage
+        timestamp: new Date().valueOf()
+        repos_name: _utils.extractProjectName data.repository.url
+
+      _entity.project.save projectData, (err, id)->
+        project_id = id
         done err
   )
 
   #批量插入任务
   queue.push(
-    (done)-> bulkInsertTasks tasks, done
+    (done)->
+      _.map tasks, (task)-> task.project_id = project_id
+      bulkInsertTasks tasks, done
   )
 
   _async.waterfall queue, (err)-> cb err, tasks.length
