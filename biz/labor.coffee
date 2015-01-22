@@ -12,6 +12,7 @@ _transport = require './transport'
 _delivery = require './delivery'
 _bhfProxy = require './bhf-proxy'
 _utils = require '../utils'
+_release = require './release'
 
 class Labor
   isRunning: false
@@ -28,9 +29,18 @@ class Labor
       (done)-> _build.execute task, done
     )
 
-    #执行分发
+    #执行分发，如果是preview的话，则
     queue.push(
-      (done)-> _delivery.execute task, done
+      (done)->
+        return done null if task.type isnt 'preview'
+        _delivery.execute task, done
+    )
+
+    #提交到svn，如果是release的话
+    queue.push(
+      (done)->
+        return done null if task.type isnt 'release'
+        _release.execute task, done
     )
 
     _async.waterfall queue, (err)->
@@ -96,8 +106,8 @@ class Labor
       self.runningTask =  task
       _utils.emitEvent 'task:start', task
 
-      #该任务没有找到递送服务器
-      if not task.delivery_server
+      #该任务没有找到递送服务器，preview的类型，必需指定递送服务器
+      if task.type is 'preview' and not task.delivery_server
         _utils.emitRealLog(
           description: '任务没有合法的递送服务器'
           task: task

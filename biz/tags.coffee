@@ -31,6 +31,7 @@ class GitLabInterface
         result = []
         _.map tags.splice(0, 9).reverse(), (tag)->
           tag.project_id = project_id
+          tag.ssh_git = sshGit
           result.push tag
 
 #        _.map tags.splice(0, 9).reverse(), (tag)->
@@ -85,7 +86,11 @@ exports.getTags = (project_id)->
 
 #初始化，获取所有项目的标签
 exports.init = (cb)->
-  _entity.project.find {}, (err, projects)->
+  options =
+    beforeQuery: (query)->
+      query.whereNotNull 'token'
+
+  _entity.project.find {}, options, (err, projects)->
     return cb?() if err or not projects
 
     index = 0

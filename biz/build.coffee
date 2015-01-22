@@ -35,7 +35,7 @@ exports.execute = (task, cb)->
 
   items = items.concat [
     {
-      command: "cd #{reposProjectDir} &&git checkout #{task.hash}"
+      command: "cd #{reposProjectDir} && git checkout #{task.hash}"
       description: "切换分支到#{task.hash}"
       task: task
     }
@@ -46,17 +46,4 @@ exports.execute = (task, cb)->
     }
   ]
 
-  index = 0
-  _async.whilst(
-    -> index < items.length
-    ((done)->
-      item = items[index++]
-      data =
-        type: 'log'
-        description: "正在#{item.description}..."
-        task: task
-
-      _utils.emitRealLog data
-      _utils.execCommand item, done
-    ), cb
-  )
+  _utils.execCommands items, cb

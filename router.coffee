@@ -31,6 +31,11 @@ getTasksRouter = (req)->
 runTaskRouter = (req)->
   req.io.respond _supervisor.runTask(req.data.task_id, req.data.uuid)
 
+#发布
+releaseRouter = (req)->
+  _api.release req.data, (err)->
+    req.io.respond err
+
 #获取所有的项目
 getProjectsRouter = (req)->
   _api.getProject req.data, (err, result )->
@@ -94,7 +99,10 @@ exports.init = (app)->
   app.io.route 'getTags', getTagsRouter
   app.io.route 'refreshTag', refreshTagRouter
   app.io.route 'removeProject', removeProjectRouter
+  app.io.route 'release', releaseRouter
 
   #常规http的路由
   app.post '/api/git/commit', gitHookRoute
   app.get /(\/\w+)?$/, (req, res, next)-> res.sendfile 'static/index.html'
+
+#  _supervisor.runTask 20423

@@ -25,7 +25,8 @@ exports.onRealLog = (cb)->
   _realEvent.addListener 'realLog', (log)-> cb?(log)
 
 #触发实时的日志
-exports.emitRealLog = (data)-> _realEvent.emit 'realLog', data
+exports.emitRealLog = (data)->
+  _realEvent.emit 'realLog', data
 
 #移除扩展名
 exports.removeExt = (filename)-> filename.replace /\.\w+/, ''
@@ -52,8 +53,8 @@ exports.previewDirectory = ->
   _path.resolve __dirname, _config.previewDirectory
 
 #获取svn的工作目录
-exports.svnDirectory = ->
-  _path.resolve __dirname, _config.svnDirectory
+exports.svnDirectory = (projectName)->
+  _path.resolve __dirname, _config.svnDirectory, projectName
 
 #用户的home目录
 exports.homeDirectory = ->
@@ -71,8 +72,10 @@ exports.execCommand = (command, cb)->
     env: process.env
     maxBuffer: 20*1024*1024
 
-  exec = child.exec command.command, options
+  console.log command.command
+  console.log command.description
 
+  exec = child.exec command.command, options
   exec.on 'close', (code)->
     data =
       command: command.command
@@ -87,12 +90,31 @@ exports.execCommand = (command, cb)->
 
   convert = new _Convert()
   exec.stdout.on 'data',  (message)->
+    console.log message
     data = type: 'stdout', content: convert.toHtml(message)
     exports.emitEvent 'stream', data
 
   exec.stderr.on 'data', (message)->
     data = type: 'stderr', content: convert.toHtml(message)
+    console.log message.red
     exports.emitEvent 'stream', data
+
+#批量执行命令
+exports.execCommands = (items, cb)->
+  index = 0
+  _async.whilst(
+    -> index < items.length
+    ((done)->
+      item = items[index++]
+      data =
+        type: 'log'
+        description: "正在#{item.description}..."
+        task: item.task
+
+      exports.emitRealLog data
+      exports.execCommand item, done
+    ), cb
+  )
 
 #从git commit message中提取指令
 exports.extractCommandFromGitMessage = (message)->

@@ -12,6 +12,7 @@ _supervisor = require './supervisor'
 _utils = require '../utils'
 _deploy = require './deploy'
 _tags = require './tags'
+_enum = require '../enumerate'
 
 exports.postOnly = (client, cb)->
   console.log 'abc'
@@ -28,7 +29,7 @@ exports.gitHook = (data, cb)->
     _utils.emitRealLog '收到非法的web hook'
     return cb null, result
 
-  _githook.execute client.body, (err, taskCount)->
+  _githook.execute data, (err, taskCount)->
     log = if err then err else "共有 #{taskCount}条任务进入队列"
     _utils.emitRealLog log
     result = success: true if not err
@@ -87,6 +88,7 @@ exports.saveProject = (data, cb)->
 exports.removeProject = (id, cb)->
   _entity.project.removeById id, cb
 
+#获取项目
 exports.getProject = (cond, cb)->
   cond = cond || {}
   return _entity.task.getAllProject cb if cond.type is 'preview'
@@ -98,3 +100,58 @@ exports.getProject = (cond, cb)->
       item.error = cache?.error
 
     cb err, result
+
+#发布
+exports.release = (data, cb)->
+  queue = []
+  task_id = 0
+
+  #第一步，检测是否在任务当中
+  queue.push(
+    (done)->
+      cond =
+        type: 'release'
+        hash: data.commit.id
+
+      _entity.task.findOne cond, (err, result)->
+        return done err if err
+        task_id = result.id if result
+
+        #不需要更改状态
+        return done err if result?.status is _enum.TaskStatus.Created
+
+        updateData = status: _enum.TaskStatus.Created
+        _entity.task.updateById task_id, updateData, (err)-> done err
+  )
+
+  #可能需要创建任务
+  queue.push(
+    (done)->
+      return done null if task_id
+      taskData =
+        project_id: data.project_id
+        hash: data.commit.id
+        message: data.commit.message
+        email: data.commit.committer.email
+        timestamp: new Date(data.commit.committed_date).valueOf()
+        status: _enum.TaskStatus.Created
+        repos: data.ssh_git
+        type: 'release'
+
+      _entity.task.save taskData, (err, id)->
+        task_id = id
+        done err
+  )
+
+  #执行任务
+  queue.push(
+    (done)->
+      if _supervisor.runningTask
+        err = _http.notAcceptableError("其它任务正在运行中，请稍候再试")
+        return done err
+
+      _supervisor.runTask task_id
+      done null
+  )
+
+  _async.waterfall queue, cb

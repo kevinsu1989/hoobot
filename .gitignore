@@ -5,3 +5,4 @@ config.coffee
 *.log
 
 static/css/main.css
+.hoobot

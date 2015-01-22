@@ -39,12 +39,13 @@ class Task extends _BaseEntity
                       WHERE
                           X.status = #{_enum.TaskStatus.Created}
                               AND X.project_id = A.project_id
+                              AND X.type = 'preview'
                       ORDER BY X.id DESC
                       LIMIT 1) AS task_id
           FROM
               task A
           WHERE
-              A.status = 1
+              A.status = 1 AND A.type = 'preview'
           GROUP BY project_id) B
               LEFT JOIN
           task C ON B.task_id = C.id

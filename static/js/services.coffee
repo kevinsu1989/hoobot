@@ -13,7 +13,6 @@ define [
       ($rootScope)->
         updateRunningTask = (data)->
           return if data.type isnt 'task'
-          console.log data.process
           switch data.process
             when 'end' then $rootScope.runningTask = null
             when 'stop' then $rootScope.runningTask = data.task
@@ -58,5 +57,8 @@ define [
           #获取所有的标签
           getTags: (project_id, cb)->
             socket.emit 'getTags', project_id: project_id, cb
+          #发布到SVN
+          release: (data, cb)->
+            socket.emit 'release', data, cb
         }
   ])

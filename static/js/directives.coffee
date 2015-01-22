@@ -239,8 +239,12 @@ define [
           scope.tags = result
           scope.$apply()
 
-      scope.onClickDeploy = (event, item)->
-        alert("正式部署这个功能还没有做")
+      scope.onClickDeploy = (event, data)->
+        SOCKET.release data, (err)->
+          $rootScope.$broadcast 'dimmer:show'
+          console.log('正在部署，请耐心等待')
+
+        #alert("正式部署这个功能还没有做")
 
       scope.$watch 'currentReleaseProjectId', ()->
         return if not scope.currentReleaseProjectId
