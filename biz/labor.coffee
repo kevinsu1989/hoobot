@@ -33,7 +33,7 @@ class Labor
     queue.push(
       (done)->
         return done null if task.type isnt 'preview'
-        _delivery.execute task, done
+        _delivery.execute task, (err)-> done err
     )
 
     #提交到svn，如果是release的话
