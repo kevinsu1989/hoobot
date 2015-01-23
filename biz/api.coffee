@@ -150,8 +150,9 @@ exports.release = (data, cb)->
         err = _http.notAcceptableError("其它任务正在运行中，请稍候再试")
         return done err
 
-      _supervisor.runTask task_id
       done null
   )
 
-  _async.waterfall queue, cb
+  _async.waterfall queue, (err)->
+    cb err, task_id
+    _supervisor.runTask task_id if not err

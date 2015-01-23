@@ -131,11 +131,7 @@ class Labor
         self.isRunning = false
         if err
           description = "任务执行失败"
-          errData =
-            content: err
-            type: 'stderr'
-
-          _utils.emitEvent 'stream', errData
+          console.log JSON.stringify(err).red
         else
           description = "任务执行完成，成功分发至#{task.delivery_server}"
 

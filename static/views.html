@@ -136,7 +136,7 @@
               </div>
               <div class="eight wide column custom-stream">
                   <h3>实时日志</h3>
-                  <div class="custom-content"></div>
+                  <div class="custom-content" realtime-stream></div>
               </div>
           </div>
           <div class="ui row custom-idle" ng-hide="running">
@@ -159,7 +159,7 @@
              </thead>
              <tbody>
              <tr ng-repeat="project in projects"
-                 ng-class="{error: !project.online}"
+                 ng-class="{error: !project.online, active: project.id == currentReleaseProjectId}"
                  ng-click="onClickProject($event, project)">
                  <td>{{project.repos_name}}</td>
                  <td>{{project.token}}</td>
@@ -220,10 +220,10 @@
                             {{tag.commit.message}}
                         </td>
                         <td class="center aligned">
-                            <div class="ui teal button" ng-click="onClickDeploy($event, tag)">部署</div>
+                            <div class="ui teal button" ng-click="onClickDeploy($event, tag)">发布</div>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="display: none;">
                         <td colspan="3" class="ui form">
                             <input type="text" placeholder="请手动输入hash值进行部署">
                         </td>

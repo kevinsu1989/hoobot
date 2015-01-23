@@ -26,14 +26,14 @@
                 <a class="item" href="/" ng-class="{active: activeMenu == 'task'}">
                     <i class="tasks large icon"></i>预览
                 </a>
+                <a class="item" href="/release" ng-class="{active: activeMenu == 'release'}">
+                    <i class="send large icon"></i>发布
+                </a>
                 <a class="item" href="/realtime" ng-class="{active: activeMenu == 'realtime'}">
                     <i class="wait large icon"></i>实时日志
                 </a>
                 <a class="item" href="/agent" ng-class="{active: activeMenu == 'agent'}">
                     <i class="database large icon"></i>代理状态
-                </a>
-                <a class="item" href="/release" ng-class="{active: activeMenu == 'release'}">
-                    <i class="send large icon"></i>发布
                 </a>
                 <div class="right menu">
                     <div class="item active">
@@ -92,6 +92,7 @@
 
 <div class="ui page dimmer" id="fullscreen" dimmer>
     <div class="ui text loader">Processing</div>
+    <!--<div class="custom-stream" realtime-stream></div>-->
 </div>
 
 </body>

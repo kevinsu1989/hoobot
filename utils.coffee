@@ -28,6 +28,12 @@ exports.onRealLog = (cb)->
 exports.emitRealLog = (data)->
   _realEvent.emit 'realLog', data
 
+exports.emitStream = (message)->
+  message = message.replace(/\n/g, '<br />')
+  convert = new _Convert()
+  message = convert.toHtml(message)
+  exports.emitEvent 'stream', message
+
 #移除扩展名
 exports.removeExt = (filename)-> filename.replace /\.\w+/, ''
 
@@ -77,6 +83,7 @@ exports.execCommand = (command, cb)->
 
   exec = child.exec command.command, options
   exec.on 'close', (code)->
+    err = null
     data =
       command: command.command
       success: code is 0
@@ -84,20 +91,17 @@ exports.execCommand = (command, cb)->
       task: command.task
       description: command.description
 
+    err = "任务发生错误，执行失败" if not data.success
+    console.log command.description
     #推送实时的日志
     exports.emitRealLog data
-    cb null, true
+    cb err
 
-  convert = new _Convert()
   exec.stdout.on 'data',  (message)->
     console.log message
-    data = type: 'stdout', content: convert.toHtml(message)
-    exports.emitEvent 'stream', data
 
   exec.stderr.on 'data', (message)->
-    data = type: 'stderr', content: convert.toHtml(message)
     console.log message.red
-    exports.emitEvent 'stream', data
 
 #批量执行命令
 exports.execCommands = (items, cb)->
@@ -106,12 +110,12 @@ exports.execCommands = (items, cb)->
     -> index < items.length
     ((done)->
       item = items[index++]
-      data =
-        type: 'log'
-        description: "正在#{item.description}..."
-        task: item.task
-
-      exports.emitRealLog data
+#      data =
+#        type: 'log'
+#        description: "正在#{item.description}..."
+#        task: item.task
+#
+#      exports.emitRealLog data
       exports.execCommand item, done
     ), cb
   )

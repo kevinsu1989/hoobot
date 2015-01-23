@@ -7,6 +7,7 @@ _express = require 'express.io'
 _http = require 'http'
 _app = _express()
 _path = require 'path'
+_sysUtil = require 'util'
 _redisStore = new require('connect-redis')(_express)
 _app.http().io()
 require 'shelljs/global'
@@ -14,6 +15,14 @@ require 'colors'
 
 _utils = require './utils'
 _config = require './config'
+
+console.log = (args...)->
+  message = _sysUtil.format.apply null, args
+  _utils.emitStream message
+
+  process.stdout.write message
+  process.stdout.write '\n'
+
 
 _app.configure(()->
   _app.use(_express.methodOverride())

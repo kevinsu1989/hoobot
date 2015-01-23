@@ -75,8 +75,8 @@ define [
     replace: false
     link: (scope, element, attrs)->
       $overview = element.find('div.custom-overview .custom-content')
-      $stream = element.find('div.custom-stream .custom-content')
-      $streamContainer = element.find('div.custom-stream')
+#      $stream = element.find('div.custom-stream .custom-content')
+#      $streamContainer = element.find('div.custom-stream')
       scope.running = false
 
       #渲染服务器返回来的日志
@@ -89,22 +89,16 @@ define [
         if data.type is 'task' and data.process is 'end' and not data.success
           $overview.css 'color', 'red'
 
-        writeStream(content: text)
+#        writeStream(content: text)
 
       writeStream = (data)->
-        text = if typeof data.content is 'object' then JSON.stringify(data.content)  else data.content
-        html = "<div class='custom-row'>#{text}</div>"
-        $stream.append html
+#        text = if typeof data.content is 'object' then JSON.stringify(data.content)  else data.content
+#        html = "<div class='custom-row'>#{text}</div>"
+#        $stream.append html
 
       scope.$on 'socket:realtime', (event, data)->
         scope.running = true
         render data
-
-      scope.$on 'socket:stream', (event, data)->
-        text = if typeof data.content is 'object' then JSON.stringify(data.content)  else data.content
-        html = "<div class='custom-row'>#{text}</div>"
-        $stream.append html
-        $stream.animate({scrollTop: $streamContainer.height()},'slow');
   ])
 
 
@@ -227,7 +221,7 @@ define [
   ])
 
   #获取发布的tag列表
-  .directive('releaseTagList', ['$rootScope', 'SOCKET', ($rootScope, SOCKET)->
+  .directive('releaseTagList', ['$rootScope', '$state', 'SOCKET', ($rootScope, $state, SOCKET)->
     restrict: 'E'
     replace: true
     template: _utils.extractTemplate('#tmpl-release-tag-list', _template)
@@ -240,9 +234,8 @@ define [
           scope.$apply()
 
       scope.onClickDeploy = (event, data)->
-        SOCKET.release data, (err)->
-          $rootScope.$broadcast 'dimmer:show'
-          console.log('正在部署，请耐心等待')
+        SOCKET.release data, (err, task_id)->
+          $state.go 'realtime', task_id: task_id
 
         #alert("正式部署这个功能还没有做")
 
@@ -260,4 +253,15 @@ define [
         element.dimmer('show', {closable: false})
 
       scope.$on 'dimmer:hide', -> element.dimmer 'hide'
+  ])
+
+  #获取后台的实时日志
+  .directive('realtimeStream', ['SOCKET', (SOCKET)->
+    restrict: 'A'
+    link: (scope, element, attrs)->
+      scope.$on 'socket:stream', (event, message)->
+        element.empty() if element.children().length > 1000
+        html = "<div class='custom-stream-row'>#{message}</div>"
+        element.append html
+#        element.animate({scrollTop: $streamContainer.height()},'slow');
   ])
