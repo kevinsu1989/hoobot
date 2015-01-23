@@ -50,5 +50,10 @@ define [
   .filter('projectName', ->
     (repos)->
       return '' if not repos
-      repos.replace(/.+\/(.+)\.git$/, '$1')
+      repos.replace(/.+:(.+)\.git$/, '$1')
+  )
+
+  .filter('hash2Link', ->
+    (hash, repos)->
+      repos.replace(/.+@(.+):(.+)\.git/, 'http://$1/$2/commit/') + hash
   )

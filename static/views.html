@@ -161,7 +161,7 @@
              <tr ng-repeat="project in projects"
                  ng-class="{error: !project.online, active: project.id == currentReleaseProjectId}"
                  ng-click="onClickProject($event, project)">
-                 <td>{{project.repos_name}}</td>
+                 <td>{{project.repos_git | projectName}}</td>
                  <td>{{project.token}}</td>
                  <td>
                      {{project.repos_git}}
@@ -214,7 +214,9 @@
                             {{tag.name}}
                         </td>
                         <td>
-                            {{tag.commit.id | limitTo: 20}}
+                            <a href="{{tag.commit.id | hash2Link: tag.ssh_git}}" target="_blank">
+                                {{tag.commit.id | limitTo: 20}}
+                            </a>
                         </td>
                         <td>
                             {{tag.commit.message}}
