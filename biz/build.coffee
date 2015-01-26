@@ -46,4 +46,4 @@ exports.execute = (task, cb)->
     }
   ]
 
-  _utils.execCommands items, cb
+  _utils.execCommandsWithTask items, cb

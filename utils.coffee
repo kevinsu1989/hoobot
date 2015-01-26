@@ -7,6 +7,8 @@ _fs = require 'fs-extra'
 _async = require 'async'
 _events = require 'events'
 _Convert = require('ansi-to-html')
+_child = require('child_process')
+
 _config = require './config'
 
 _realEvent = new _events.EventEmitter()
@@ -30,9 +32,12 @@ exports.emitRealLog = (data)->
 
 exports.emitStream = (message)->
   message = message.replace(/\n/g, '<br />')
+  message = exports.ansi2html message
+  exports.emitEvent 'stream', message
+
+exports.ansi2html = (message)->
   convert = new _Convert()
   message = convert.toHtml(message)
-  exports.emitEvent 'stream', message
 
 #移除扩展名
 exports.removeExt = (filename)-> filename.replace /\.\w+/, ''
@@ -71,13 +76,28 @@ exports.cleanTarget = (target)->
   return if not _fs.existsSync target
   _fs.removeSync target
 
-#批量执行命令，遇到问题即返回
+#执行命令，返回结果以及错误
 exports.execCommand = (command, cb)->
+  options =
+    env: process.env
+    maxBuffer: 20*1024*1024
+  message = ''
+  error = ''
+
+  exec = _child.exec command, options
+  exec.on 'close', (code)->
+    cb code, message, error
+
+  exec.stdout.on 'data',  (chunk)-> message += chunk + '\n'
+  exec.stderr.on 'data', (chunk)->  error += chunk + '\n'
+
+#批量执行命令，遇到问题即返回
+exports.execCommandWithTask = (command, cb)->
   child = require('child_process')
   options =
     env: process.env
     maxBuffer: 20*1024*1024
-
+``
   console.log command.command
   console.log command.description
 
@@ -104,7 +124,7 @@ exports.execCommand = (command, cb)->
     console.log message.red
 
 #批量执行命令
-exports.execCommands = (items, cb)->
+exports.execCommandsWithTask = (items, cb)->
   index = 0
   _async.whilst(
     -> index < items.length
@@ -116,7 +136,7 @@ exports.execCommands = (items, cb)->
 #        task: item.task
 #
 #      exports.emitRealLog data
-      exports.execCommand item, done
+      exports.execCommandWithTask item, done
     ), cb
   )
 

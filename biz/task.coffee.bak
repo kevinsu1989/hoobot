@@ -32,7 +32,7 @@ exports.execute (task, cb)->
         }
       ]
 
-      success = _utils.execCommands commands
+      success = _utils.execCommandsWithTask commands
       return done null, success if not success
   )
 

@@ -83,9 +83,9 @@ exports.init = (app)->
 
   initSocketEvent(app)
   #hoobot的当前状态
-  app.io.route 'getHoobotStatus', hoobotStatusRouter
+  app.io.route 'getHoobotStatus', (req)-> req.io.respond _status.get()
   #代理服务器的状态
-  app.io.route 'getAgentStatus', (req)-> req.io.respond _status.agentStatus()
+#  app.io.route 'getAgentStatus', (req)-> req.io.respond _status.agentStatus()
   #获取汇总后的信息
   app.io.route 'getPreviewProject', getPreviewProjectRouter
   #获取所有任务

@@ -21,7 +21,7 @@ deliverProject = (source, projectName, task, cb)->
     task: task
   }
 
-  _utils.execCommand command, (err)->
+  _utils.execCommandWithTask command, (err)->
     return cb err if err
     #分发到服务器
     _transport.deliverProject tarFile, task, cb

@@ -3,40 +3,56 @@
 
     </textarea>
 
-    <textarea id="tmpl-agent-list">
-        <table class="ui celled structured table">
-            <thead>
-                <tr>
-                    <th class="one wide"></th>
-                    <th class="one wide">UUID</th>
-                    <th class="three wide">服务器地址</th>
-                    <th class="one wide">状态码</th>
-                    <th class="one wide">版本</th>
-                    <th>工作目录</th>
-                    <th class="three wide">最后检查</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="agent in agents">
-                    <td class="center aligned">
-                        <i class="large circle icon" ng-class="{true: 'green check', false: 'red remove'}[agent.online]"></i>
-                    </td>
-                    <td>{{agent.uuid}}</td>
-                    <td>{{agent.server}}</td>
-                    <td>
-                        {{agent.info.statusCode}}
-                    </td>
-                    <td>
-                        {{agent.info.version}}
-                    </td>
-                    <td>
-                        {{agent.info.previewDirectory}}
-                    </td>
-                    <td data-time-ago="{{agent.timestamp}}">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!--服务器的状态-->
+    <textarea id="tmpl-status">
+        <div class="ui grid">
+            <div class="ten wide column">
+                <h3>代理状态</h3>
+                <table class="ui celled structured table" agent-status>
+                    <thead>
+                    <tr>
+                        <th class="one wide"></th>
+                        <th class="one wide">UUID</th>
+                        <th class="three wide">服务器地址</th>
+                        <th class="one wide">状态码</th>
+                        <th class="one wide">版本</th>
+                        <th>工作目录</th>
+                        <th class="three wide">最后检查</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="agent in status.agents">
+                        <td class="center aligned">
+                            <i class="large circle icon" ng-class="{true: 'green check', false: 'red remove'}[agent.online]"></i>
+                        </td>
+                        <td>{{agent.uuid}}</td>
+                        <td>{{agent.server}}</td>
+                        <td>
+                            {{agent.info.statusCode}}
+                        </td>
+                        <td>
+                            {{agent.info.version}}
+                        </td>
+                        <td>
+                            {{agent.info.previewDirectory}}
+                        </td>
+                        <td data-time-ago="{{agent.timestamp}}">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="six wide column">
+                <h3>Silky版本</h3>
+                <div>
+                    {{status.silkyVersion}}
+                </div>
+                <h3>Silky 插件</h3>
+                <div ng-bind-html="status.silkyPlugin | unsafe">
+                </div>
+            </div>
+        </div>
     </textarea>
 
     <textarea id="tmpl-deploy-agent-dropdown">

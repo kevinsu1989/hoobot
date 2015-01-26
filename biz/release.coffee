@@ -49,4 +49,4 @@ exports.execute = (task, cb)->
     }
   )
 
-  _utils.execCommands list, cb
+  _utils.execCommandsWithTask list, cb

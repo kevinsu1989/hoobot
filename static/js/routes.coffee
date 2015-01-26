@@ -22,9 +22,9 @@ define [
         controller: 'projectsController'
       )
 
-      .state('agents',
-        url: '/agent'
-        template: _utils.extractTemplate('#tmpl-agent-list', _template)
+      .state('status',
+        url: '/status'
+        template: _utils.extractTemplate('#tmpl-status', _template)
         controller: 'agentController'
       )
 

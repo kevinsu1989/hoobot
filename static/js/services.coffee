@@ -23,7 +23,7 @@ define [
 
           socket.on 'stream', (data)-> $rootScope.$broadcast 'socket:stream', data
           #服务器主动推送状态信息
-          socket.on 'agent:status', (data)-> $rootScope.$broadcast 'socket:agent:status', data
+          socket.on 'status', (data)-> $rootScope.$broadcast 'socket:status', data
           #实时的日志消息
           socket.on 'realtime', (data)->
             updateRunningTask data
@@ -31,7 +31,7 @@ define [
 
         {
           #获取代理服务器的状态
-          agentStatus: (cb)-> socket.emit 'getAgentStatus', cb
+          getHoobotStatus: (cb)-> socket.emit 'getHoobotStatus', cb
           #所有的项目
           getPreviewProject: (cb)-> socket.emit 'getPreviewProject', cb
           #获取项目信息

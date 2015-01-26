@@ -9,31 +9,41 @@ _transport = require './transport'
 _config = require '../config'
 _utils = require '../utils'
 
-_agents = []
+_status = {}
+
+#检测Silky插件和状态
+checkSilkyStatus = ()->
+  _utils.execCommand "silky --version", (code, message, error)->
+    _status.silkyVersion = _utils.ansi2html message
+
+  _utils.execCommand "silky list", (code, message, error)->
+    _status.silkyPlugin = _utils.ansi2html message
 
 exports.init = (cb)->
+  checkSilkyStatus()
   _entity.delivery_server.find {}, (err, result)->
-    _agents = result
+    _status.agents = result
     exports.update()
     cb? err
 
-exports.agentStatus = ()-> _agents
+exports.get = ()-> _status
 
 #更新所有服务器的状态
 exports.update = ()->
+  _status.agents = _status.agents || []
   index = 0
   _async.whilst(
-    -> index < _agents.length
+    -> index < _status.agents.length
     (
       (done)->
-        agent = _agents[index++]
+        agent = _status.agents[index++]
         _transport.areYouWorking agent.server, (err, result)->
           agent.online = not err and result.statusCode is 200
           agent.info = result
           agent.timestamp = new Date().valueOf()
           done null
     ), ((err)->
-      _utils.emitEvent 'status', _agents
+      _utils.emitEvent 'status', _status.agents
       setTimeout (-> exports.update()), (_config.updateAgentStatusInterval || 5) * 1000 * 60
     )
   )

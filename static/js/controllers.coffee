@@ -14,17 +14,16 @@ define [
   .controller('agentController', ['$rootScope', '$scope', 'SOCKET',
     ($rootScope, $scope, SOCKET)->
       $rootScope.activeMenu = 'agent'
-      $scope.agents = []
-
-      updateAgents = (agents)->
-        $scope.agents = agents
-        $scope.$apply()
-
-      #服务器主动推送代理的状态
-      $rootScope.$on 'socket:agent:status', (event, agents)-> updateAgents agents
-
-      #获取服务器状态
-      SOCKET.agentStatus (agents)-> updateAgents agents
+#      $scope.status = {}
+#      updateStatus = (event, status)->
+#        $scope.status = status
+#        $scope.$apply()
+#
+#      #服务器主动推送代理的状态
+#      $rootScope.$on 'socket:status', updateStatus
+#
+#      #获取服务器状态
+#      SOCKET.getHoobotStatus (status)-> updateStatus null, status
   ])
 
   .controller('projectsController', ['$rootScope', '$scope', 'SOCKET',

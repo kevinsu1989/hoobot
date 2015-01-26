@@ -105,16 +105,16 @@ define [
   .directive('agentStatus', ['$rootScope', 'SOCKET', ($rootScope, SOCKET)->
     restrict: 'A'
     link: (scope, element, attrs)->
-      scope.agents = []
-      updateAgents = (agents)->
-        scope.agents = agents
+      scope.status = {}
+      updateStatus = (event, status)->
+        scope.status = status
         scope.$apply()
 
       #服务器主动推送代理的状态
-      $rootScope.$on 'socket:agent:status', (event, agents)-> updateAgents agents
+      $rootScope.$on 'socket:status', updateStatus
 
       #获取服务器状态
-      SOCKET.agentStatus (agents)-> updateAgents agents
+      SOCKET.getHoobotStatus (status)-> updateStatus null, status
   ])
 
   #顶部的消息

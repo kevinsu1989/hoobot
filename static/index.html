@@ -32,8 +32,8 @@
                 <a class="item" href="/realtime" ng-class="{active: activeMenu == 'realtime'}">
                     <i class="wait large icon"></i>实时日志
                 </a>
-                <a class="item" href="/agent" ng-class="{active: activeMenu == 'agent'}">
-                    <i class="database large icon"></i>代理状态
+                <a class="item" href="/status" ng-class="{active: activeMenu == 'agent'}">
+                    <i class="database large icon"></i>状态
                 </a>
                 <div class="right menu">
                     <div class="item active">
@@ -41,7 +41,7 @@
                             <li class="item">
                                 <label>代理状态：</label>
                             </li>
-                            <li class="item" ng-repeat="agent in agents">
+                            <li class="item" ng-repeat="agent in status.agents">
                                 <i class="large circle icon" ng-class="{true: 'green check', false: 'red remove'}[agent.online]"></i>
                                 <label ng-bind="agent.uuid"></label>
                             </li>
