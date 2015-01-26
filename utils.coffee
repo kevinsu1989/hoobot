@@ -93,15 +93,14 @@ exports.execCommand = (command, cb)->
 
 #批量执行命令，遇到问题即返回
 exports.execCommandWithTask = (command, cb)->
-  child = require('child_process')
   options =
     env: process.env
     maxBuffer: 20*1024*1024
-``
+
   console.log command.command
   console.log command.description
 
-  exec = child.exec command.command, options
+  exec = _child.exec command.command, options
   exec.on 'close', (code)->
     err = null
     data =
