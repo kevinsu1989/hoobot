@@ -41,7 +41,13 @@ exports.gitHook = (data, cb)->
 #获取任务列表
 exports.getTask = (query, cb)->
   cond = project_id: query.project_id
+  cond.type = query.type if query.type
+
   options =
+    orderBy:
+      status: 'ASC'
+      timestamp: 'DESC'
+
     pagination: _entity.task.pagination query.pageIndex, query.pageSize
   _entity.task.find cond, options, cb
 

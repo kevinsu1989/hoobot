@@ -61,7 +61,7 @@
             <div class="ui floating dropdown icon button" dropdown-action>
                 <i class="dropdown icon"></i>
                 <div class="menu">
-                    <div class="item" ng-repeat="agent in agents" ng-click="onClickDeploy($event, task, agent.uuid)">
+                    <div class="item" ng-repeat="agent in status.agents" ng-click="onClickDeploy($event, task, agent.uuid)">
                         <i class="play icon"></i>部署到{{agent.uuid}}
                     </div>
                 </div>
