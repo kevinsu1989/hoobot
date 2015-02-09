@@ -43,7 +43,9 @@ _app.post('/', (req, res, next)->
   )
 
   attachment = req.files.attachment
-  _deploy.execute attachment, req.body, (err)->
+  projectName = req.body.projectName || _utils.extractProjectName(task?.repos)
+
+  _deploy.execute attachment, projectName, req.body, (err)->
     _utils.emitRealLog(
       message: '代理服务器部署完成'
       body: req.body

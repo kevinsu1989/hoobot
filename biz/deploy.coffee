@@ -8,9 +8,8 @@ _utils = require '../utils'
 _fs = require 'fs-extra'
 
 #部署从分发服务器上传过来的项目，需要解包
-exports.execute = (attachment, task, cb)->
+exports.execute = (attachment, projectName, task, cb)->
   tarFile = attachment.path
-  projectName = _utils.extractProjectName task.repos
   targetDir = _path.join _utils.previewDirectory(), projectName
   _fs.ensureDirSync targetDir
 
@@ -19,6 +18,8 @@ exports.execute = (attachment, task, cb)->
     description: "解开tar包到目标项目"
     task: task
   }
+
+  return cb null if not task
 
   _utils.execCommandWithTask command, (err)->
     #不管有没有成功，都要删除临时文件，如果没有成功，返回错误信息到分发服务器再行处理
