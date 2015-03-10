@@ -44,6 +44,7 @@ _app.post('/', (req, res, next)->
 
   attachment = req.files.attachment
   projectName = req.body.projectName || _utils.extractProjectName(task?.repos)
+  projectName = projectName || 'unknown'
 
   _deploy.execute attachment, projectName, req.body, (err)->
     _utils.emitRealLog(
