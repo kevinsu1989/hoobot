@@ -45,7 +45,6 @@ exports.getTask = (query, cb)->
 
   options =
     orderBy:
-      status: 'ASC'
       timestamp: 'DESC'
 
     pagination: _entity.task.pagination query.pageIndex, query.pageSize
