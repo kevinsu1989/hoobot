@@ -110,8 +110,8 @@
                     <a href="{{task.url}}" target="_blank">{{task.hash | limitTo: 10}}</a>
                 </td>
                 <td>{{task.message}}</td>
-                <td>{{task.timestamp | date: 'yyyy-MM-dd hh:mm'}}</td>
-                <td>{{task.last_execute | date: 'yyyy-MM-dd hh:mm'}}</td>
+                <td>{{task.timestamp | date: 'yyyy-MM-dd HH:mm'}}</td>
+                <td>{{task.last_execute | date: 'yyyy-MM-dd HH:mm'}}</td>
                 <td>{{task.status | taskStatus}}</td>
                 <td class="center aligned">
                     <deploy-agent-dropdown/>
@@ -230,9 +230,14 @@
                             {{tag.name}}
                         </td>
                         <td>
-                            <a href="{{tag.commit.id | hash2Link: tag.ssh_git}}" target="_blank">
-                                {{tag.commit.id | limitTo: 20}}
-                            </a>
+                            <p>
+                                <a href="{{tag.commit.id | hash2Link: tag.ssh_git}}" target="_blank">
+                                    {{tag.commit.id | limitTo: 20}}
+                                </a>
+                            </p>
+                            <p>
+                                {{tag.commit.committed_date | date: 'yyyy-MM-dd HH:mm'}}
+                            </p>
                         </td>
                         <td>
                             {{tag.commit.message}}

@@ -92,10 +92,14 @@ class Labor
           done err
     )
 
-
-
-    #获取最前的一条任务
     _async.waterfall queue, (err)->
+      if err
+        console.log err
+        message = "执行任务发生错误：#{err.message}"
+        _utils.emitRealLog message
+        self.isRunning = false
+        return
+
       #没有任务了
       if not task
         message = if task_id then "没有找到可执行的任务" else "所有任务都已经完成"

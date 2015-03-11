@@ -111,6 +111,8 @@ exports.release = (data, cb)->
   queue = []
   task_id = 0
 
+  #return console.log data
+
   #第一步，检测是否在任务当中
   queue.push(
     (done)->
@@ -137,7 +139,7 @@ exports.release = (data, cb)->
         project_id: data.project_id
         hash: data.commit.id
         message: data.commit.message
-        email: data.commit.committer.email
+        email: data.commit.committer_email
         timestamp: new Date(data.commit.committed_date).valueOf()
         status: _enum.TaskStatus.Created
         repos: data.ssh_git
