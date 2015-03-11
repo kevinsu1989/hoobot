@@ -15,13 +15,16 @@ class Task extends _BaseEntity
   #获取指定ID的任务
   getTaskById: (task_id, cb)->
     sql = "SELECT
-          A . *, B.server AS delivery_server
+          A . *, B.server AS delivery_server, C.command
       FROM
           task A
               LEFT JOIN
           delivery_server B ON A.target = B.uuid
+              LEFT JOIN
+          project C ON A.project_id = C.id
       WHERE
           A.id = #{task_id}"
+
     @execute sql, (err, data)-> cb err, data && data[0]
 
   #获取最前的Task，每个项目只取最新一条，一个项目多次build没有意义

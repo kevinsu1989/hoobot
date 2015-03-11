@@ -16,7 +16,7 @@ class Project extends _BaseEntity
     if cond.type is 'task'
 
     else
-      sql = "SELECT * FROM project WHERE token IS NOT NULL"
+      sql = "SELECT * FROM project"
 
     @execute sql, cb
 
