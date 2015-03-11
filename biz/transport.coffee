@@ -9,6 +9,7 @@ _qs = require 'querystring'
 _request = require 'request'
 _fs = require 'fs-extra'
 _ = require 'lodash'
+_path = require 'path'
 
 _utils = require '../utils'
 _config = require '../config'
@@ -31,10 +32,17 @@ exports.areYouWorking = (server, cb)->
     cb err, data
 
 #分发tarboll到目标服务器
-exports.deliverProject = (tarfile, task, cb)->
-  formData = {}
+exports.deliverProject = (tarfile, projectName, task, cb)->
+  #先从项目的.silky/config.js中提取honey-preview的分发项目名
+  projectConfig = _path.join _utils.reposDireectory(projectName), '.silky', 'config.js'
+  if _fs.existsSync projectConfig
+    pluginOptions = projectConfig.plugins?["honey-preview"] || {}
+    projectName = pluginOptions.project_name || pluginOptions.projectName || projectName
+
+  formData = project_name: projectName
   for key, value of task
     formData[key] = value if not (value in [undefined, null])
+
   formData.attachment = _fs.createReadStream tarfile
 
   options =
