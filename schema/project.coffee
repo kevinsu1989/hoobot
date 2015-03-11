@@ -16,3 +16,5 @@ exports.schema =
     token: ''
     #最后的执行时间
     timestamp: 'bigInteger'
+    #发布时将要执行的命令，默认会执行silky build
+    command: 'text'

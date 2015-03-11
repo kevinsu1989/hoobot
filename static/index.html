@@ -77,12 +77,21 @@
                 <input type="text" ng-model="project.repos_git">
             </div>
             <div class="field">
+                <label>
+                    执行指令
+                    <a href="http://bhf.hunantv.com/project/88/version/80/document/4845" target="_blank" title="如何自定义执行指令？">
+                        <i class="icon help circle large"></i>
+                    </a>
+                </label>
+                <input type="text" ng-model="project.command" placeholder="发布时要执行的指令，默认会发布到svn">
+            </div>
+            <div class="field">
                 <label>Token
                     <a href="http://bhf.hunantv.com/project/88/version/80/document/4020" target="_blank" title="如何知道我的Token？">
                         <i class="icon help circle large"></i>
                     </a>
                 </label>
-                <input type="text" ng-model="project.token">
+                <input type="text" ng-model="project.token" placeholder="如果没有设置token，则使用默认的token，但默认token可能没有足够的权限">
             </div>
         </form>
     </div>

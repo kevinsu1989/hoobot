@@ -209,8 +209,8 @@ define [
         }).modal('show')
 
       scope.onClickSave = (event)->
-        return alert('Token必需添加，否无法获取Tag列表') if not scope.project.token
-        return alert('项目名称必需添加') if not scope.project.repos_name
+#        return alert('Token必需添加，否无法获取Tag列表') if not scope.project.token
+#        return alert('项目名称必需添加') if not scope.project.repos_name
         return alert('仓库地址必需添加') if not scope.project.repos_git
 
         SOCKET.saveProject scope.project, ()->

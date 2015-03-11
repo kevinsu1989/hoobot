@@ -9,6 +9,7 @@ _path = require 'path'
 _ = require 'lodash'
 _http = require('bijou').http
 _entity = require('../entity')
+_config = require '../config'
 _cache = {}
 
 class GitLabInterface
@@ -29,7 +30,7 @@ class GitLabInterface
 
       self.gitlab.projects.repository.listTags project.id, (tags)->
         result = []
-        _.map tags.splice(0, 9).reverse(), (tag)->
+        _.map tags.splice(0, 9), (tag)->
           tag.project_id = project_id
           tag.ssh_git = sshGit
           result.push tag
@@ -56,7 +57,8 @@ exports.refreshTag = (project_id, cb)->
       _entity.project.findById project_id, (err, result)->
         err = _http.notFoundError() if not err and not result
         return done err if err
-        token = result.token
+        #如果没有设置token，则采用默认的token
+        token = result.token || _config.gitlabToken
         sshGit = result.repos_git
         done err
   )
@@ -86,11 +88,7 @@ exports.getTags = (project_id)->
 
 #初始化，获取所有项目的标签
 exports.init = (cb)->
-  options =
-    beforeQuery: (query)->
-      query.whereNotNull 'token'
-
-  _entity.project.find {}, options, (err, projects)->
+  _entity.project.find {}, (err, projects)->
     return cb?() if err or not projects
 
     index = 0

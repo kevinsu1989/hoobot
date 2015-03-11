@@ -33,17 +33,30 @@ exports.execute = (task, cb)->
       task: task
     }]
 
-  items = items.concat [
+  items.push(
     {
       command: "cd #{reposProjectDir} && git checkout #{task.hash}"
       description: "切换分支到#{task.hash}"
       task: task
     }
-    {
-      command: "cd #{reposProjectDir} && silky build -o #{buildTarget}"
-      description: "用Silky构建项目"
-      task: task
-    }
-  ]
+  )
+
+  #使用自定义的命令进行构建
+  if task.command
+    items.push(
+      {
+        command: "cd #{reposProjectDir} && #{task.command}"
+        description: "执行项目自定义的命令：#{task.command}"
+        task: task
+      }
+    )
+  else
+    items.push(
+      {
+        command: "cd #{reposProjectDir} && silky build -o #{buildTarget}"
+        description: "用Silky构建项目"
+        task: task
+      }
+    )
 
   _utils.execCommandsWithTask items, cb
