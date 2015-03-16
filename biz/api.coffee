@@ -57,7 +57,7 @@ exports.saveTask = (data, cb)->
   #保存到active_task
   queue.push(
     (done)->
-      _entity.active_task.updateActiveTask data.project_id, data.target, data.hash, done
+      _entity.active_task.updateActiveTask data.project_id, data.target, data.type, data.hash, done
   )
 
   _async.waterfall queue, (err)-> cb err

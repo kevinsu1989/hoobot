@@ -23,7 +23,11 @@ class ActiveTask extends _BaseEntity
       return cb err if err
 
       data = _.extend server: server, cond
+      data.hash = hash
+      data.timestamp = new Date().valueOf()
       data.id = result.id if result
+
+      console.log data
       self.save data, cb
 
 module.exports = new ActiveTask

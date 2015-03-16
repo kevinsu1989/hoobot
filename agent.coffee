@@ -67,6 +67,6 @@ _app.get('/are-you-working', (req, res, next)->
   _http.responseJSON null, data, res
 )
 
-_app.listen _app.get 'port'
+_app.listen _app.get('port')
 console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
 
