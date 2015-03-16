@@ -15,11 +15,10 @@ _tags = require './tags'
 _enum = require '../enumerate'
 
 exports.postOnly = (client, cb)->
-  console.log 'abc'
   cb null, "此API仅支持POST请求"
 
 #直接处理task，目前主要用于honey-preview提交数据
-#要求数据是已经处理过，直接可以保存到数据库的信息
+#要求数据是已经处理过，直接可以保存到数据库的信息，能提交到这里的，表示确定已经是分发成功的
 exports.saveTask = (data, cb)->
   queue = []
   #获取对应的项目id
@@ -53,6 +52,12 @@ exports.saveTask = (data, cb)->
     (done)->
       data.status = _enum.TaskStatus.Success
       _githook.insertOrUpdateTask data, done
+  )
+
+  #保存到active_task
+  queue.push(
+    (done)->
+      _entity.active_task.updateActiveTask data.project_id, data.target, data.hash, done
   )
 
   _async.waterfall queue, (err)-> cb err

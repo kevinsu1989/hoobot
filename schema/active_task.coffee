@@ -10,5 +10,9 @@ exports.schema =
     hash: ''
     #接收服务器地址
     server: ''
+    #对应的项目id
+    project_id: 'integer'
+    #类型
+    type: ''
     #最后发布的时间
     timestamp: 'bigInteger'

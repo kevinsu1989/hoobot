@@ -43,6 +43,12 @@ class Labor
         _release.execute task, done
     )
 
+    #更新活动服务器
+    queue.push(
+      (done)->
+        _entity.active_task.updateActiveTask task.project_id, task.target, task.type, task.hash, done
+    )
+
     _async.waterfall queue, (err)->
       task.status = if err then _enum.Failure else _enum.Success
       self.finishTask task, (otherErr)-> cb(err || otherErr)
