@@ -46,13 +46,15 @@ _app.post('/', (req, res, next)->
   projectName = req.body.project_name || req.body.projectName || _utils.extractProjectName(task?.repos) || 'unknown'
 
   _deploy.execute attachment, projectName, req.body, (err)->
+    message = '代理服务器部署完成'
     _utils.emitRealLog(
-      message: '代理服务器部署完成'
+      message: message
       body: req.body
       type: 'agent'
       error: err
     )
 
+    console.log message
     result = success: !err
     _http.responseJSON err, result, res
 )
