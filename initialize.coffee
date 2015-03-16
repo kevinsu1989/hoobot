@@ -52,7 +52,7 @@ initBijou = (app)->
 
   _async.waterfall queue, (err)->
     console.log err if err
-    console.log 'BHF is running now!'
+    console.log 'Hoobot is running now!'
 
 module.exports = (app)->
   #确定所依赖的命令都存在

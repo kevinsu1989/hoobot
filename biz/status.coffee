@@ -38,7 +38,7 @@ exports.update = ()->
       (done)->
         agent = _status.agents[index++]
         _transport.areYouWorking agent.server, (err, result)->
-          agent.online = not err and result.statusCode is 200
+          agent.online = not err and result?.statusCode is 200
           agent.info = result
           agent.timestamp = new Date().valueOf()
           done null

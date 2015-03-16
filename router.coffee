@@ -16,6 +16,10 @@ gitHookRoute = (req, res, next)->
   data = req.body
   _api.gitHook data, (err, result)-> _http.responseJSON err, result, res
 
+saveTask = (req, res, next)->
+  data = req.body
+  _api.saveTask data, (err, result)-> _http.responseJSON err, result, res
+
 #获取服务器当前运行的任务，有多少个任务需要执行
 hoobotStatusRouter = (req)->
   req.io.respond running: true
@@ -103,6 +107,7 @@ exports.init = (app)->
 
   #常规http的路由
   app.post '/api/git/commit', gitHookRoute
+  app.post '/api/task', saveTask
   app.get /(\/\w+)?$/, (req, res, next)-> res.sendfile 'static/index.html'
 
 #  _supervisor.runTask 20423

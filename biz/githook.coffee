@@ -11,10 +11,9 @@ _enum = require '../enumerate'
 _bhfProxy = require './bhf-proxy'
 
 #保存单条任务
-insertTask = exports.insertTask = (task, cb)->
+insertOrUpdateTask = exports.insertOrUpdateTask = (task, cb)->
   queue = []
-
-  # 将相同项目的status为created都改掉，
+    # 一个项目下，只能有一个活动的任务存在
   # 相同项目、目标、类型不能重复
   queue.push(
     (done)->
@@ -28,9 +27,23 @@ insertTask = exports.insertTask = (task, cb)->
       _entity.task.update cond, data, done
   )
 
-  #保存任务
+  #根据hash检查相同任务是否已经存在
   queue.push(
-    (done)-> _entity.task.save task, done
+    (done)->
+      cond =
+        project_id: task.project_id
+        target: task.target
+        type: task.type
+
+      _entity.task.findOne cond, (err, result)->
+        return done err if err
+
+        console.log cond, result
+        #如果存在则更新
+        if result?.id
+          _entity.task.updateById result.id, task, done
+        else
+          _entity.task.save task, done
   )
 
   _async.waterfall queue, (err)-> cb err
@@ -51,8 +64,10 @@ bulkInsertTasks = (tasks, cb)->
         _entity.task.exists cond, (err, exists)->
           #存在或者错误都不再继续
           return done err if err or exists
+
+          task.status = _enum.TaskStatus.Created
           #保存任务
-          insertTask task, (err)-> done err
+          insertOrUpdateTask task, (err)-> done err
     ), cb
   )
 
@@ -83,6 +98,7 @@ analysePushEvent = (data)->
 
   result
 
+
 #分析hook，提取符合规则的git，保存到任务队列
 exports.execute = (data, cb)->
   tasks = analysePushEvent(data)
@@ -90,17 +106,18 @@ exports.execute = (data, cb)->
 
   project_id = 0
   queue = []
-  #根据git地址，获取对应的项目，如果没有项目存在，则插入新的项目
+
+  #获取对应的项目id
   queue.push(
     (done)->
       cond = repos_git: data.repository.url
       _entity.project.findOne cond, (err, result)->
         return done err if err
-        project_id = result.id if result
+        project_id = result?.id
         done err
   )
 
-  #如果还没有项目，则创建一个项目
+  #根据git地址，获取对应的项目，如果没有项目存在，则插入新的项目
   queue.push(
     (done)->
       return done null if project_id

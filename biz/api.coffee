@@ -18,6 +18,45 @@ exports.postOnly = (client, cb)->
   console.log 'abc'
   cb null, "此API仅支持POST请求"
 
+#直接处理task，目前主要用于honey-preview提交数据
+#要求数据是已经处理过，直接可以保存到数据库的信息
+exports.saveTask = (data, cb)->
+  queue = []
+  #获取对应的项目id
+  queue.push(
+    (done)->
+      cond = repos_git: data.repos_git
+      _entity.project.findOne cond, (err, result)->
+        return done err if err
+        data.project_id = result?.id
+        done err
+  )
+
+  #根据git地址，获取对应的项目，如果没有项目存在，则插入新的项目
+  queue.push(
+    (done)->
+      return done null if data.project_id
+
+      projectData =
+        repos_git: data.repos_git
+        repos_url: data.repos_url
+        timestamp: new Date().valueOf()
+        repos_name: _utils.extractProjectName data.repos_url
+
+      _entity.project.save projectData, (err, id)->
+        data.project_id = id
+        done err
+  )
+
+  #保存任务
+  queue.push(
+    (done)->
+      data.status = _enum.TaskStatus.Success
+      _githook.insertOrUpdateTask data, done
+  )
+
+  _async.waterfall queue, (err)-> cb err
+
 #接收并处理githook，仅支持push events
 exports.gitHook = (data, cb)->
   if not (data.repository and data.commits?.length)
