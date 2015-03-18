@@ -54,15 +54,17 @@ getTagsRouter = (req)->
   req.io.respond _tags.getTags(req.data.project_id)
 
 refreshTagRouter = (req)->
-  console.log 'abc'
   _tags.refreshTag req.data.project_id, (err, result)->
-    console.log 'abd'
     req.io.respond err, result
 
 #删除项目的路由
 removeProjectRouter = (req)->
   _api.removeProject req.data.project_id, (err)->
     req.io.respond()
+
+getActiveTaskRouter = (req)->
+  _api.getActiveTask req.data.project_id, (err, result)->
+    req.io.respond(err, result)
 
 #初始货socket事件
 initSocketEvent = (app)->
@@ -104,6 +106,7 @@ exports.init = (app)->
   app.io.route 'refreshTag', refreshTagRouter
   app.io.route 'removeProject', removeProjectRouter
   app.io.route 'release', releaseRouter
+  app.io.route 'getActiveTask', getActiveTaskRouter
 
   #常规http的路由
   app.post '/api/git/commit', gitHookRoute

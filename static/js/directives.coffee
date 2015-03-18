@@ -23,6 +23,24 @@ define [
       scope.$on '$destroy', ()-> window.clearInterval timer
   ])
 
+  .directive('activeTask', ['SOCKET', (SOCKET)->
+    restrict: 'E'
+    replace: true
+    scope: {}
+    template: _utils.extractTemplate '#tmpl-active-task', _template
+    link: (scope, element, attrs)->
+      #加载数据
+      loadData = (projectId)->
+        return if not projectId
+
+        SOCKET.getActiveTask projectId, (err, result)->
+          scope.activeTask = result
+          scope.$apply()
+
+      attrs.$observe 'projectId', ->
+        loadData attrs.projectId
+  ])
+
   #任务列表tmpl-task-list
   .directive('taskList', ['$rootScope', '$state', 'SOCKET', ($rootScope, $state, SOCKET)->
     restrict: 'E'
@@ -54,10 +72,10 @@ define [
   ])
 
   #项目列表
-  .directive('projectList', ['SOCKET', (SOCKET)->
+  .directive('previewProjectList', ['SOCKET', (SOCKET)->
     restrict: 'E'
     replace: false
-    template: _utils.extractTemplate '#tmpl-project-list', _template
+    template: _utils.extractTemplate '#tmpl-preview-project-list', _template
     link: (scope, element, attrs)->
       scope.onClickProjectItem = (event, project)->
         scope.currentProjectId = project.project_id
@@ -181,8 +199,9 @@ define [
         event.stopPropagation()
         scope.currentReleaseProjectId = project.id
 
+      #加载所有honey-lab的项目
       loadProject = ()->
-        cond = type: 'release'
+        cond = honeyLabOnly: true
         SOCKET.getProjects cond, (result)->
           scope.projects = result
           return if not (result and result.length > 0)

@@ -150,6 +150,10 @@ exports.getProject = (cond, cb)->
 
     cb err, result
 
+#获取所有的活动任务
+exports.getActiveTask = (project_id, cb)->
+  _entity.active_task.findActiveTask project_id, cb
+
 #发布
 exports.release = (data, cb)->
   queue = []

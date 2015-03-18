@@ -12,12 +12,11 @@ class Project extends _BaseEntity
     super require('../schema/project').schema
 
   fetch: (cond, cb)->
+    sql = "SELECT * FROM project WHERE 1 = 1"
     cond = cond || {}
-    if cond.type is 'task'
+    sql += " AND repos_git LIKE '%honey-lab%'" if cond.honeyLabOnly
 
-    else
-      sql = "SELECT * FROM project"
-
+    console.log sql
     @execute sql, cb
 
 

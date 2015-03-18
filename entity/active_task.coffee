@@ -11,7 +11,24 @@ class ActiveTask extends _BaseEntity
   constructor: ()->
     super require('../schema/active_task').schema
 
-  #检查
+  #根据项目id，查询活动的服务器列表
+  findActiveTask: (project_id, cb)->
+    if typeof project_id is 'function'
+      cb = project_id
+      project_id = null
+
+    sql = "SELECT
+        A.hash, A.server, A.timestamp, A.project_id, B.message, B.status, B.url
+    FROM
+        active_task AS A
+            left join
+        task B ON A.hash = B.hash
+            AND A.project_id = B.project_id
+            AND A.type = B.type WHERE 1 = 1"
+
+    sql += " AND A.project_id = #{project_id}" if project_id
+    @execute sql, cb
+
   updateActiveTask: (project_id, server, type, hash, cb)->
     self = @
     cond =
@@ -27,7 +44,6 @@ class ActiveTask extends _BaseEntity
       data.timestamp = new Date().valueOf()
       data.id = result.id if result
 
-      console.log data
       self.save data, cb
 
 module.exports = new ActiveTask

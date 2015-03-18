@@ -80,11 +80,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="six wide column">
-                    <project-list></project-list>
+                <div class="eight wide column">
+                    <preview-project-list></preview-project-list>
                 </div>
 
-                <div class="ten wide column">
+                <div class="eight wide column">
                     <task-list data-project-id="{{currentProjectId}}"></task-list>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                 <th class="three wide">创建时间</th>
                 <th class="three wide">最后执行</th>
                 <th class="two wide">状态</th>
-                <th class="two wide">部署</th>
+                <th style="min-width: 140px;">部署</th>
             </tr>
             </thead>
             <tbody>
@@ -122,13 +122,22 @@
     </textarea>
 
     <!--项目列表-->
-    <textarea id="tmpl-project-list">
+    <textarea id="tmpl-preview-project-list">
          <table class="ui celled structured table">
              <thead>
              <tr>
-                 <th>项目名称</th>
-                 <th>最新任务</th>
-                 <th>最新状态</th>
+                 <th class="four wide column">项目名称</th>
+                 <th class="custom-no-padding">
+                     <table class="ui very basic table custom-active-task">
+                         <thead>
+                             <tr>
+                                 <td class="two wide center aligned">服务器</td>
+                                 <td class="custom-left-padding">message & hash</td>
+                                 <td class="four wide center aligned">部署时间</td>
+                             </tr>
+                         </thead>
+                     </table>
+                 </th>
              </tr>
              </thead>
              <tbody>
@@ -136,11 +145,31 @@
                  ng-click="onClickProjectItem($event, project)"
                  ng-class="{active: project.project_id == currentProjectId, error: project.status != 10 && project.status != 1}">
                  <td>{{project.repos | projectName}}</td>
-                 <td>{{project.message}}</td>
-                 <td>{{project.status | taskStatus}}</td>
+                 <td class="custom-no-padding">
+                     <active-task data-project-id="{{project.project_id}}"></active-task>
+                 </td>
              </tr>
              </tbody>
          </table>
+    </textarea>
+
+    <!--活动的任务-->
+    <textarea id="tmpl-active-task">
+        <table class="ui very basic table custom-active-task">
+            <tr ng-show="activeTask.length == 0">
+                <td class="custom-left-padding">
+                    还没有部署的版本
+                </td>
+            </tr>
+            <tr ng-repeat="item in activeTask" ng-show="activeTask.length > 0">
+                <td class="two wide center aligned">{{item.server}}</td>
+                <td class="custom-left-padding">
+                    <a href="{{item.url}}" target="_blank">{{item.hash | limitTo: 10}}</a>
+                    <span>{{item.message}}</span>
+                </td>
+                <td class="four wide center aligned">{{item.timestamp | date: 'yyyy-mm-dd hh:mm'}}</td>
+            </tr>
+        </table>
     </textarea>
 
     <textarea id="tmpl-realtime">

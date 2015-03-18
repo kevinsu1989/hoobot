@@ -38,7 +38,6 @@ insertOrUpdateTask = exports.insertOrUpdateTask = (task, cb)->
       _entity.task.findOne cond, (err, result)->
         return done err if err
 
-        console.log cond, result
         #如果存在则更新
         if result?.id
           _entity.task.updateById result.id, task, done
