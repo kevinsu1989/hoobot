@@ -57,3 +57,13 @@ define [
     (hash, repos)->
       repos.replace(/.+@(.+):(.+)\.git/, 'http://$1/$2/commit/') + hash
   )
+
+  .filter('highlightMember', ->
+    (projectName)->
+      projectName.replace(/^(.+)\/(.+)/, '<span class="custom-member">$1</span>/$2')
+  )
+
+  .filter('unsafe', ['$sce', ($sce)->
+    (text)->
+      $sce.trustAsHtml(text)
+  ])

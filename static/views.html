@@ -98,10 +98,10 @@
             <tr>
                 <th class="one wide">Hash</th>
                 <th>说明</th>
-                <th class="three wide">创建时间</th>
-                <th class="three wide">最后执行</th>
-                <th class="two wide">状态</th>
-                <th style="min-width: 140px;">部署</th>
+                <th class="custom-full-time">创建时间</th>
+                <th class="custom-full-time">最后执行</th>
+                <th style="width: 60px; min-width: 60px;">状态</th>
+                <th class="custom-full-time">部署</th>
             </tr>
             </thead>
             <tbody>
@@ -144,7 +144,7 @@
              <tr ng-repeat="project in projects"
                  ng-click="onClickProjectItem($event, project)"
                  ng-class="{active: project.project_id == currentProjectId, error: project.status != 10 && project.status != 1}">
-                 <td>{{project.repos | projectName}}</td>
+                 <td ng-bind-html="project.repos | projectName | highlightMember | unsafe"></td>
                  <td class="custom-no-padding">
                      <active-task data-project-id="{{project.project_id}}"></active-task>
                  </td>
