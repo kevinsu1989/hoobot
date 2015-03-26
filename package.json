@@ -2,6 +2,7 @@
   "name": "hoobot",
   "version": "0.0.20150123",
   "dependencies": {
+    "ansi-to-html": "^0.3.0",
     "async": "^0.9.0",
     "bijou": "0.0.9",
     "cheerio": "^0.18.0",
