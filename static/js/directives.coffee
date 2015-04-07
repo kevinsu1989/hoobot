@@ -72,7 +72,7 @@ define [
   ])
 
   #项目列表
-  .directive('previewProjectList', ['SOCKET', (SOCKET)->
+  .directive('previewProjectList', ['$filter', 'SOCKET', ($filter, SOCKET)->
     restrict: 'E'
     replace: true
     template: _utils.extractTemplate '#tmpl-preview-project-list', _template
@@ -82,6 +82,11 @@ define [
 
       cond = type: 'preview'
       SOCKET.getProjects cond, (data)->
+        data.sort (left, right)->
+          leftName = $filter('projectName')(left.repos, true).toLowerCase()
+          rightName = $filter('projectName')(right.repos, true).toLowerCase()
+          if leftName is rightName then 0 else 1
+
         scope.projects = data
         scope.currentProjectId = data[0].project_id if data.length > 0
         scope.$apply()

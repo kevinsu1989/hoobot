@@ -48,9 +48,11 @@ define [
   )
 
   .filter('projectName', ->
-    (repos)->
+    (repos, ignoreMember)->
       return '' if not repos
-      repos.replace(/.+:(.+)\.git$/, '$1')
+      name = repos.replace(/.+:(.+)\.git$/, '$1')
+      name = name.replace(/.+\/(.+)/ig, '$1') if ignoreMember
+      name
   )
 
   .filter('hash2Link', ->
