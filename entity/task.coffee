@@ -65,7 +65,13 @@ class Task extends _BaseEntity
   #获取所有的项目，并按最近提交的排序
   getAllProject: (cb)->
     sql = "SELECT
-          C . *
+          C . *,
+          (SELECT
+                  COUNT(*)
+              FROM
+                  active_task
+              WHERE
+                  active_task.project_id = C.project_id) AS active_task_total
       FROM
           (SELECT
               project_id,
@@ -74,8 +80,8 @@ class Task extends _BaseEntity
                       FROM
                           task X
                       WHERE
-                        X.project_id = A.project_id
-                            AND X.type = 'preview'
+                          X.project_id = A.project_id
+                              AND X.type = 'preview'
                       ORDER BY X.status DESC , X.timestamp DESC
                       LIMIT 1) AS task_id
           FROM

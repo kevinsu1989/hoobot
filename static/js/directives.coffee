@@ -74,7 +74,7 @@ define [
   #项目列表
   .directive('previewProjectList', ['SOCKET', (SOCKET)->
     restrict: 'E'
-    replace: false
+    replace: true
     template: _utils.extractTemplate '#tmpl-preview-project-list', _template
     link: (scope, element, attrs)->
       scope.onClickProjectItem = (event, project)->

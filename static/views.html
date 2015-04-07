@@ -142,7 +142,9 @@
              </thead>
              <tbody>
              <tr ng-repeat="project in projects"
+                 class="custom-project-preview-row"
                  ng-click="onClickProjectItem($event, project)"
+                 ng-if="project.active_task_total > 0"
                  ng-class="{active: project.project_id == currentProjectId, error: project.status != 10 && project.status != 1}">
                  <td ng-bind-html="project.repos | projectName | highlightMember | unsafe"></td>
                  <td class="custom-no-padding">
