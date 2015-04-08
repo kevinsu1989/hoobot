@@ -165,7 +165,7 @@
             </tr>
             <tr ng-repeat="item in activeTask"
                 ng-show="activeTask.length > 0"
-                ng-class="{'custom-lock': item.is_lock, 'custom-unlock': !item.is_lock }">
+                ng-class="{'custom-unlock': item.is_lock, 'custom-lock': !item.is_lock }">
                 <td class="two wide center aligned">
                     {{item.server}}
                     <div
@@ -173,7 +173,7 @@
                             ng-click="onClickLock($event, item)"
                             title="{{item.is_lock ? '解锁' : '锁定'}}"
                             >
-                        <i class="icon" ng-class="{'unlock alternate green': item.is_lock, 'lock red': !item.is_lock}"></i>
+                        <i class="icon medium" ng-class="{'unlock alternate red': item.is_lock, 'lock': !item.is_lock}"></i>
                     </div>
                 </td>
                 <td class="custom-left-padding">
