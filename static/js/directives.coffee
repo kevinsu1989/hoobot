@@ -39,6 +39,10 @@ define [
 
       attrs.$observe 'projectId', ->
         loadData attrs.projectId
+
+      scope.onClickLock = (event, item)->
+        event.stopPropagation()
+        SOCKET.changeActiveTaskLock item.id, !item.is_lock, (err)-> loadData item.project_id
   ])
 
   #任务列表tmpl-task-list

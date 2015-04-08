@@ -66,6 +66,11 @@ getActiveTaskRouter = (req)->
   _api.getActiveTask req.data.project_id, (err, result)->
     req.io.respond(err, result)
 
+#加解锁任务锁
+changeActiveTaskLockRouter = (req)->
+  _api.changeActiveTaskLock req.data.task_id, req.data.is_lock, (err)->
+    req.io.respond()
+
 #初始货socket事件
 initSocketEvent = (app)->
   #实时的日志
@@ -107,6 +112,7 @@ exports.init = (app)->
   app.io.route 'removeProject', removeProjectRouter
   app.io.route 'release', releaseRouter
   app.io.route 'getActiveTask', getActiveTaskRouter
+  app.io.route 'changeActiveTaskLock', changeActiveTaskLockRouter
 
   #常规http的路由
   app.post '/api/git/commit', gitHookRoute

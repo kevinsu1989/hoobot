@@ -62,6 +62,11 @@ exports.saveTask = (data, cb)->
 
   _async.waterfall queue, (err)-> cb err
 
+#更改锁定状态
+exports.changeActiveTaskLock = (task_id, is_lock, cb)->
+  data = is_lock: ~~is_lock
+  _entity.active_task.updateById task_id, data, cb
+
 #接收并处理githook，仅支持push events
 exports.gitHook = (data, cb)->
   if not (data.repository and data.commits?.length)

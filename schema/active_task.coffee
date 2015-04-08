@@ -16,3 +16,5 @@ exports.schema =
     type: ''
     #最后发布的时间
     timestamp: 'bigInteger'
+    #是否锁定
+    is_lock: 'boolean'

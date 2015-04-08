@@ -18,7 +18,7 @@ class ActiveTask extends _BaseEntity
       project_id = null
 
     sql = "SELECT
-        A.hash, A.server, A.timestamp, A.project_id, B.message, B.status, B.url
+        A.hash, A.server, A.timestamp, A.project_id, B.message, B.status, B.url, A.id, A.is_lock
     FROM
         active_task AS A
             left join

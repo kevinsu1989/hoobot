@@ -30,6 +30,12 @@ define [
             $rootScope.$broadcast 'socket:realtime', data
 
         {
+          #解锁或者加锁
+          changeActiveTaskLock: (task_id, is_lock, cb)->
+            data =
+              task_id: task_id
+              is_lock: is_lock
+            socket.emit 'changeActiveTaskLock', data, cb
           #获取活动的任务
           getActiveTask: (project_id, cb)-> socket.emit 'getActiveTask', project_id: project_id, cb
           #获取代理服务器的状态
