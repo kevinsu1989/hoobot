@@ -47,7 +47,7 @@ class GitLabInterface
 #获取一个项目的所有标签
 exports.refreshTag = (project_id, cb)->
   queue = []
-  token = null
+  token = _config.gitlabToken
   sshGit = null
   tags = []
 

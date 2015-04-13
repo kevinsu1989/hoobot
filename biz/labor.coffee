@@ -13,6 +13,7 @@ _delivery = require './delivery'
 _bhfProxy = require './bhf-proxy'
 _utils = require '../utils'
 _release = require './release'
+_config = require '../config'
 
 class Labor
   isRunning: false
@@ -32,16 +33,16 @@ class Labor
     #执行分发，如果是preview的话，则
     queue.push(
       (done)->
-        return done null if task.type isnt 'preview'
+#        return done null if task.type isnt 'preview'
         _delivery.execute task, (err)-> done err
     )
 
-    #提交到svn，如果是release的话
-    queue.push(
-      (done)->
-        return done null if task.type isnt 'release'
-        _release.execute task, done
-    )
+#    #提交到svn，如果是release的话
+#    queue.push(
+#      (done)->
+#        return done null if task.type isnt 'release'
+#        _release.execute task, done
+#    )
 
     #更新活动服务器
     queue.push(
@@ -89,6 +90,11 @@ class Labor
     #如果有指定uuid，则获取该uuid对应的任务
     queue.push(
       (done)->
+        #
+        if task?.type is 'release'
+          task.delivery_server = _config.release.server
+          return done null
+
         return done null if not (uuid and task)
         cond = uuid: uuid
         _entity.delivery_server.findOne cond, (err, result)->

@@ -7,7 +7,6 @@ define [
   'ng'
   'utils'
   't!/views.html'
-  'pkg/semantic/semantic.min'
 ], (_ng, _utils, _template)->
   _ng.module("app.directives", ['app.services', 'app.filters'])
 
@@ -223,8 +222,9 @@ define [
   ])
 
   .directive('releaseProjectEditor', ['$rootScope', 'SOCKET', ($rootScope, SOCKET)->
-    restrict: 'A'
-    replace: false
+    restrict: 'E'
+    replace: true
+    template: _utils.extractTemplate '#tmpl-release-project-editor', _template
     link: (scope, element, attrs)->
       scope.project = {}
 
@@ -261,11 +261,7 @@ define [
           scope.tags = result
           scope.$apply()
 
-      scope.onClickDeploy = (event, data)->
-        SOCKET.release data, (err, task_id)->
-          $state.go 'realtime', task_id: task_id
-
-        #alert("正式部署这个功能还没有做")
+      scope.onClickDeploy = (event, data)-> $rootScope.$broadcast 'release:authority:show', data
 
       scope.$watch 'currentReleaseProjectId', ()->
         return if not scope.currentReleaseProjectId
@@ -284,7 +280,7 @@ define [
   ])
 
   #获取后台的实时日志
-  .directive('realtimeStream', ['SOCKET', (SOCKET)->
+  .directive('realtimeStream', ['$state', 'SOCKET', ($state, SOCKET)->
     restrict: 'A'
     link: (scope, element, attrs)->
       scope.$on 'socket:stream', (event, message)->
@@ -292,4 +288,39 @@ define [
         html = "<div class='custom-stream-row'>#{message}</div>"
         element.append html
 #        element.animate({scrollTop: $streamContainer.height()},'slow');
+  ])
+
+  .directive('releaseAuthority', ['$state', 'SOCKET', ($state, SOCKET)->
+    restrict: 'E'
+    scope: {}
+    replace: true
+    template: _utils.extractTemplate '#tmpl-release-authority', _template
+    link: (scope, element, attrs)->
+
+      scope.token = null
+      releaseData = null
+
+      #提交发布
+      submitRelease = ()->
+        return alert '请输入发布密码' if not scope.token
+
+        releaseData.token = scope.token
+        SOCKET.release releaseData, (err, task_id)->
+          return alert(err.message) if err
+
+          element.modal('hide')
+          $state.go 'realtime', task_id: task_id
+
+      #显示
+      scope.$on 'release:authority:show', (event, data)->
+        scope.token = null
+        releaseData = data
+        element.modal('setting', {
+          'closable': false
+          onApprove: -> false
+        }).modal('show')
+
+      scope.$on 'release:authority:hide', -> element.modal('hide')
+
+      scope.onClickRelease = -> submitRelease()
   ])

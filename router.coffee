@@ -38,7 +38,7 @@ runTaskRouter = (req)->
 #发布
 releaseRouter = (req)->
   _api.release req.data, (err, task_id)->
-    req.io.respond err, task_id
+    req.io.respond err and err.toJSON(), task_id
 
 #获取所有的项目
 getProjectsRouter = (req)->

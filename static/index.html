@@ -59,47 +59,9 @@
     </div>
 </div>
 
-<div class="ui small modal" release-project-editor>
-    <i class="close icon"></i>
-    <div class="header">
-        添加新项目
-    </div>
-    <div class="content">
-        <form class="ui form">
-            <!--
-            <div class="field">
-                <label>项目名称</label>
-                <input type="text" ng-model="project.repos_name">
-            </div>
-            -->
-            <div class="field">
-                <label>仓库地址</label>
-                <input type="text" ng-model="project.repos_git">
-            </div>
-            <div class="field">
-                <label>
-                    执行指令
-                    <a href="http://bhf.hunantv.com/project/88/version/80/document/4845" target="_blank" title="如何自定义执行指令？">
-                        <i class="icon help circle large"></i>
-                    </a>
-                </label>
-                <input type="text" ng-model="project.command" placeholder="发布时要执行的指令，默认会发布到svn">
-            </div>
-            <div class="field">
-                <label>Token
-                    <a href="http://bhf.hunantv.com/project/88/version/80/document/4020" target="_blank" title="如何知道我的Token？">
-                        <i class="icon help circle large"></i>
-                    </a>
-                </label>
-                <input type="text" ng-model="project.token" placeholder="如果没有设置token，则使用默认的token，但默认token可能没有足够的权限">
-            </div>
-        </form>
-    </div>
-    <div class="actions">
-        <div class="default close ui button">取消</div>
-        <div class="primary approve ui button" ng-click="onClickSave($event)">保存</div>
-    </div>
-</div>
+<!--发布验证-->
+<release-authority></release-authority>
+<release-project-editor></release-project-editor>
 
 <div class="ui page dimmer" id="fullscreen" dimmer>
     <div class="ui text loader">Processing</div>

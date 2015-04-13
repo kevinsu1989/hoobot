@@ -14,12 +14,15 @@ require.config
     moment: 'vendor/moment'
     utils: 'utils'
     pkg:'/package'
+    'semantic': '/package/semantic/semantic.min'
   shim:
-    'v/jquery.noty': 'jquery'
-    ng: exports : 'angular'
-    'v/jquery.transit': ['jquery', '_']
+#    'v/jquery.noty': 'jquery'
+    ng:
+      exports : 'angular'
+      deps: ['semantic']
+#    'v/jquery.transit': ['jquery', '_']
     app: ['ng', 'jquery']
-    'v/jquery.modal': 'jquery'
+    'semantic': ['jquery']
 
 window.name = "NG_DEFER_BOOTSTRAP!";
 
@@ -27,6 +30,5 @@ require [
   "ng"
   "app"
   "routes"
-  'jquery'
 ], (_ng, _app) ->
   _ng.element().ready -> _ng.resumeBootstrap [_app.name]

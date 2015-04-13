@@ -13,6 +13,7 @@ _utils = require '../utils'
 _deploy = require './deploy'
 _tags = require './tags'
 _enum = require '../enumerate'
+_config = require '../config'
 
 exports.postOnly = (client, cb)->
   cb null, "此API仅支持POST请求"
@@ -164,7 +165,10 @@ exports.release = (data, cb)->
   queue = []
   task_id = 0
 
-  #return console.log data
+  #检查token是否一致
+  if data.token isnt _config.release.token
+    err = _http.notAcceptableError('您的授权码输入有误，三次连续输入错误服务器将会自爆')
+    return cb err
 
   #第一步，检测是否在任务当中
   queue.push(
