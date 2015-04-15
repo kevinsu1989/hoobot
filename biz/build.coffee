@@ -16,8 +16,19 @@ exports.execute = (task, cb)->
   reposProjectDir = _utils.reposDireectory projectName
   #构建的目标目录
   buildTarget = _utils.buildDireectory projectName
-  #  _utils.cleanTarget reposProjectDir
+  #shell脚本的位置
 
+  shellFile = _path.join __dirname, '..', 'shell', 'build.sh'
+  commandText = "sh '#{shellFile}' '#{task.repos}' '#{reposProjectDir}' '#{buildTarget}' '#{task.hash}'"
+  commandText += " '#{task.command}'" if task.command
+  command =
+    command: commandText
+    task: task
+    description: '执行构建脚本'
+
+  _utils.execCommandWithTask command, cb
+
+  ###
   #检查本地仓库是否存在，如果存在，则使用fetch
   if _fs.existsSync reposProjectDir
     console.log reposProjectDir
@@ -31,7 +42,20 @@ exports.execute = (task, cb)->
       command: "git clone #{task.repos} #{reposProjectDir}"
       description: "从远程clone仓库"
       task: task
+    }, {
+      command: "cd '#{reposProjectDir}' && if [ ! -d .submodule ]; then ; git submodule init && git submodule update ; fi"
+      description: "初始化submodule"
+      task: task
     }]
+
+  #如果有.submodule存在，则更新所有的子模板
+  items.push(
+    {
+      command: "cd #{reposProjectDir} && if [ ! -d .submodule ]; then ; git submodule foreach git pull origin master ; fi"
+      description: "切换分支到#{task.hash}"
+      task: task
+    }
+  )
 
   items.push(
     {
@@ -60,3 +84,4 @@ exports.execute = (task, cb)->
     )
 
   _utils.execCommandsWithTask items, cb
+###
