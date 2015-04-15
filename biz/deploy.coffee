@@ -9,29 +9,40 @@ _fs = require 'fs-extra'
 _config = require '../config'
 _ = require 'lodash'
 
-#release，还需要复制css/image/js三个目录，同时生成version.json并写入tag
-copyToSync = (projectName, sourceDir, task)->
+
+writeVersionFile = (syncDir, task)->
   version =
     tag: task.tag
     hash: task.hash
     url: task.url
     timestamp: new Date().toString()
 
+  #写入版本数据
+  versionFile = _path.join syncDir, 'version.json'
+  _fs.writeJSONFileSync versionFile, version
+
+#复制项目到sync目录
+copyToSync = (projectName, sourceDir, task)->
+  isHoney =  /^honey$/.test projectName
+
+  projectName = 'honey-2.0' if isHoney
   #获取同步目录
   syncDir = _path.join _config.syncDirectory, projectName
   _fs.ensureDirSync syncDir
 
-  #写入版本数据
-  versionFile = _path.join syncDir, 'version.json'
-  _fs.writeJSONFileSync versionFile, version
-  console.log version, versionFile
+  #非honey项目，由copyNormalProjectToSync处理
+  return copyNormalProjectToSync syncDir, sourceDir if not isHoney
 
+  #honey需要复制到特殊的目录
+  _fs.copySync sourceDir, syncDir
+
+#release，还需要复制css/image/js三个目录，同时生成version.json并写入tag
+copyNormalProjectToSync = (syncDir, sourceDir)->
   #复制
   _.map ['image', 'js', 'css'], (folder)->
     source = _path.join sourceDir, folder
     target = _path.join syncDir, folder
 
-    console.log source, target
     #源文件夹不存在
     return if not _fs.existsSync(source)
 
