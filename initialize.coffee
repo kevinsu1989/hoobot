@@ -62,5 +62,6 @@ module.exports = (app)->
   #初始化路由
   require('./router').init(app)
   _supervisor.execute()
+#  _supervisor.runTask 158, null
   _status.init()
   _tags.init()

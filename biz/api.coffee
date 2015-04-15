@@ -195,6 +195,7 @@ exports.release = (data, cb)->
       taskData =
         project_id: data.project_id
         hash: data.commit.id
+        tag: data.name
         message: data.commit.message
         email: data.commit.committer_email
         timestamp: new Date(data.commit.committed_date).valueOf()

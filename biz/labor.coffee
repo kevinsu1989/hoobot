@@ -71,7 +71,7 @@ class Labor
     else
       _entity.task.getForemostTask cb
 
-  execute: (task_id, uuid)->
+  execute: (task_id, server_uuid)->
     return if @isRunning
 
     self = @
@@ -87,7 +87,7 @@ class Labor
           done err
     )
 
-    #如果有指定uuid，则获取该uuid对应的任务
+    #如果有指定server_uuid，则获取该server_uuid对应的任务
     queue.push(
       (done)->
         #
@@ -95,18 +95,17 @@ class Labor
           task.delivery_server = _config.release.server
           return done null
 
-        return done null if not (uuid and task)
-        cond = uuid: uuid
+        return done null if not (server_uuid and task)
+        cond = uuid: server_uuid
         _entity.delivery_server.findOne cond, (err, result)->
           return done err if err or not result
           task.delivery_server = result.server
-          task.target = uuid
+          task.target = server_uuid
           done err
     )
 
     _async.waterfall queue, (err)->
       if err
-        console.log err
         message = "执行任务发生错误：#{err.message}"
         _utils.emitRealLog message
         self.isRunning = false

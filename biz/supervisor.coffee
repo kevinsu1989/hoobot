@@ -12,9 +12,9 @@ exports.execute = ->
   _labor.execute()
 
 #强行执行某个任务，必需没有任务执行
-exports.runTask = (task_id, uuid)->
+exports.runTask = (task_id, server_uuid)->
   return false if _labor.isRunning
-  _labor.execute task_id, uuid
+  _labor.execute task_id, server_uuid
   return true
 
 exports.runningTask = _labor.runningTask

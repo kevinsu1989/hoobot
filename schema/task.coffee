@@ -32,3 +32,5 @@ exports.schema =
     type: {type: 'string', index: true}
     #最后的执行时间
     last_execute: 'bigInteger'
+    #标签，用于release
+    tag: ''

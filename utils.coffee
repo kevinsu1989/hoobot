@@ -146,3 +146,9 @@ exports.extractCommandFromGitMessage = (message)->
   matches = message.match pattern
   return if not matches
   return type: matches[1], target: matches[2]
+
+#读取文件
+exports.readFile = (file)-> _fs.readFileSync file, 'utf-8'
+#保存文件
+exports.writeFile = (file, content)-> _fs.outputFileSync file, content
+
