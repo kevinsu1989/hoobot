@@ -315,9 +315,6 @@ define [
       scope.$on 'release:authority:show', (event, data)->
         scope.token = null
         releaseData = data
-        scope.token = 'stayfoolish'
-        submitRelease()
-        return;
 
         element.modal('setting', {
           'closable': false
