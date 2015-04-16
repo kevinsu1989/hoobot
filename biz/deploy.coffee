@@ -9,7 +9,7 @@ _fs = require 'fs-extra'
 _config = require '../config'
 _ = require 'lodash'
 
-
+#写入version.json
 writeVersionFile = (syncDir, task)->
   version =
     tag: task.tag
@@ -28,7 +28,12 @@ copyToSync = (projectName, sourceDir, task)->
   projectName = 'honey-2.0' if isHoney
   #获取同步目录
   syncDir = _path.join _config.syncDirectory, projectName
+  #删除同步目录
+  _fs.removeSync syncDir
+  #确定文件夹存在
   _fs.ensureDirSync syncDir
+
+  writeVersionFile syncDir, task
 
   #非honey项目，由copyNormalProjectToSync处理
   return copyNormalProjectToSync syncDir, sourceDir if not isHoney
