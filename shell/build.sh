@@ -24,23 +24,20 @@ else
     #不存在，clone代码
     echo "clone项目到本地"
     git clone "$REPOSITORY" "$LOCALDIR" && cd $LOCALDIR
-
-    #检查是否需要初始化git submodule
-    if [ -f "$SUBMODULE" ] ; then
-        echo "设置submodule"
-        git submodule init && git submodule update
-    fi
-fi
-
-#如果有submodule，则更新之
-echo "$SUBMODULE"
-if [ -f "$SUBMODULE" ] ; then
-    echo "更新所有的submodule"
-    git submodule foreach git fetch origin master
 fi
 
 echo "切换到指定hash"
 git checkout "$HASH"
+
+#如果有submodule，则更新之
+echo "$SUBMODULE"
+if [ -f "$SUBMODULE" ] ; then
+    echo "设置submodule"
+    git submodule init && git submodule update
+
+    echo "更新所有的submodule"
+    git submodule foreach git fetch origin master
+fi
 
 if [ -z "$COMMAND" ] ; then
     echo "执行silky命令"
