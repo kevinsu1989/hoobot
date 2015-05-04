@@ -35,8 +35,8 @@ if [ -f "$SUBMODULE" ] ; then
     echo "设置submodule"
     git submodule init && git submodule update
 
-    echo "更新所有的submodule"
-    git submodule foreach git fetch origin master
+    #echo "更新所有的submodule"
+    #git submodule foreach git fetch origin master
 fi
 
 if [ -z "$COMMAND" ] ; then
