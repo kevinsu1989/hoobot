@@ -10,25 +10,22 @@ _config = require '../config'
 _ = require 'lodash'
 
 #写入version.json
-writeVersionFile = (syncDir, task, tag)->
-  version =
-    tag: tag || task.tag
+writeVersionFile = (target, data)->
+  return if not _fs.existsSync target
+  #写入版本数据
+  versionFile = _path.join target, 'version.json'
+  _fs.writeJSONFileSync versionFile, data
+
+#复制项目到sync目录
+copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
+  versionData =
+    tag: if isSpecialSubject then "zt/#{projectName}/#{task.tag}" else task.tag
     hash: task.hash
     url: task.url
     timestamp: new Date().toString()
 
-  #写入版本数据
-  versionFile = _path.join syncDir, 'version.json'
-  _fs.writeJSONFileSync versionFile, version
-
-#复制项目到sync目录
-copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
   #是否为hone项目
   isHoney =  /^honey$/.test projectName
-  tag = task.tag
-
-  tag = "#{projectName}.#{tag}" if isSpecialSubject
-
   projectName = 'honey-2.0' if isHoney
 
   #专题，有子文件夹
@@ -44,14 +41,16 @@ copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
   _fs.ensureDirSync syncDir
 
   #将版本信息写到syncBaseDir中，因为专题会多出一级项目来
-  writeVersionFile syncBaseDir, task, tag
+  writeVersionFile syncBaseDir, versionData
 
   #honey直接复制就可以了
-  if isHoney
-    _fs.copySync sourceDir, syncDir
-  else
-    #非honey项目，由copyNormalProjectToSync 处理
-    copyNormalProjectToSync syncDir, sourceDir
+  return _fs.copySync sourceDir, syncDir if isHoney
+  #非honey项目，由copyNormalProjectToSync 处理
+  copyNormalProjectToSync syncDir, sourceDir
+  #分别写入version的文件到js/img/css目录
+  _.map ['image', 'css', 'js'], (folder)->
+    target = _path.join syncDir, folder
+    writeVersionFile target, versionData
 
 #release，还需要复制css/image/js三个目录，同时生成version.json并写入tag
 copyNormalProjectToSync = (syncDir, sourceDir)->
