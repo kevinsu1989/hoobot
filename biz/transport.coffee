@@ -34,8 +34,10 @@ exports.areYouWorking = (server, cb)->
 #分发tarboll到目标服务器
 exports.deliverProject = (tarfile, projectName, task, cb)->
   #先从项目的.silky/config.js中提取honey-preview的分发项目名
-  projectConfig = _path.join _utils.reposDireectory(projectName), '.silky', 'config.js'
-  if _fs.existsSync projectConfig
+  projectConfigFile = _path.join _utils.reposDireectory(projectName), '.silky', 'config.js'
+
+  if _fs.existsSync projectConfigFile
+    projectConfig = require projectConfigFile
     pluginOptions = projectConfig.plugins?["honey-preview"] || {}
     projectName = pluginOptions.project_name || pluginOptions.projectName || projectName
 

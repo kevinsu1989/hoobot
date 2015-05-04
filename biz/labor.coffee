@@ -12,7 +12,7 @@ _transport = require './transport'
 _delivery = require './delivery'
 _bhfProxy = require './bhf-proxy'
 _utils = require '../utils'
-_release = require './release'
+#_release = require './release'
 _config = require '../config'
 
 class Labor
