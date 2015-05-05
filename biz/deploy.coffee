@@ -18,15 +18,16 @@ writeVersionFile = (target, data)->
 
 #复制项目到sync目录
 copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
-  versionData =
-    tag: if isSpecialSubject then "zt/#{projectName}/#{task.tag}" else task.tag
-    hash: task.hash
-    url: task.url
-    timestamp: new Date().toString()
-
   #是否为hone项目
   isHoney =  /^honey$/.test projectName
   projectName = 'honey-2.0' if isHoney
+
+  versionData =
+    project: projectName
+    tag: task.tag
+    hash: task.hash
+    url: task.url
+    timestamp: new Date().toString()
 
   #专题，有子文件夹
   if isSpecialSubject
