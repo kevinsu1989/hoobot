@@ -30,6 +30,14 @@ class GitLabInterface
 
       self.gitlab.projects.repository.listTags project.id, (tags)->
         result = []
+
+        tags = tags.sort (left, right)->
+          leftDate = new Date(left.commit.committed_date).getTime()
+          rightDate = new Date(right.commit.committed_date).getTime()
+          if leftDate > rightDate  then -1
+          else if leftDate < rightDate then 1
+          else 0
+
         _.map tags.splice(0, 9), (tag)->
           tag.project_id = project_id
           tag.ssh_git = sshGit
