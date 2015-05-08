@@ -44,6 +44,8 @@ define [
           getPreviewProject: (cb)-> socket.emit 'getPreviewProject', cb
           #获取项目信息
           getProjects: (cond, cb)-> socket.emit 'getProjects', cond,  cb
+          #获取所有git用户
+          getGitUsers: (cb)-> socket.emit 'getGitUsers', cb
           #获取所有的任务
           getTasks: (params, cb)->
             socket.emit 'getTasks', params, cb

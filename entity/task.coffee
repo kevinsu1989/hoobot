@@ -63,7 +63,7 @@ class Task extends _BaseEntity
       cb err, task
 
   #获取所有的项目，并按最近提交的排序
-  getAllProject: (cb)->
+  getAllProject: (cond,cb)->
     sql = "SELECT
           C . *,
           (SELECT
@@ -87,11 +87,15 @@ class Task extends _BaseEntity
           FROM
               task A
           WHERE
-              A.type = 'preview'
-          GROUP BY project_id) B
+              A.type = 'preview'"
+
+    sql += " AND repos LIKE '%#{cond.git_username}%' " if cond.git_username
+
+    sql += "GROUP BY project_id) B
               LEFT JOIN
           task C ON B.task_id = C.id
       ORDER BY C.last_execute ASC"
+
 
     @execute sql, cb
 

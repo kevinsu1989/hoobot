@@ -39,4 +39,5 @@ define [
         template: _utils.extractTemplate('#tmpl-release', _template)
         controller: 'releaseProjectListController'
       )
+
   ])

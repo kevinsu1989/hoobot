@@ -15,9 +15,10 @@ class Project extends _BaseEntity
     sql = "SELECT * FROM project WHERE 1 = 1"
     cond = cond || {}
     sql += " AND repos_git LIKE '%honey-lab%'" if cond.honeyLabOnly
-
-    console.log sql
     @execute sql, cb
 
+  getGitUsers: (cb)->
+    sql = "SELECT DISTINCT(git_username) FROM project"
+    @execute sql, cb
 
 module.exports = new Project

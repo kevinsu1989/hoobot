@@ -18,3 +18,5 @@ exports.schema =
     timestamp: 'bigInteger'
     #发布时将要执行的命令，默认会执行silky build
     command: 'text'
+    #gitlab的username
+    git_username: 'text'
