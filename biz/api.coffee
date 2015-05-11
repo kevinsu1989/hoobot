@@ -137,6 +137,9 @@ exports.deleteDeliveryServer = (id, cb)->
 
 #保存项目信息
 exports.saveProject = (data, cb)->
+  console.log data
+  reg=/\:(.*)\//
+  data.git_username = reg.exec(data.repos_git)[1]
   _entity.project.save data, cb
 
 #删除项目信息
@@ -146,7 +149,7 @@ exports.removeProject = (id, cb)->
 #获取项目
 exports.getProject = (cond, cb)->
   cond = cond || {}
-  return _entity.task.getAllProject cb if cond.type is 'preview'
+  return _entity.task.getAllProject(cond, cb) if cond.type is 'preview'
 
   _entity.project.fetch cond, (err, result)->
     _.map result, (item)->
@@ -155,6 +158,10 @@ exports.getProject = (cond, cb)->
       item.error = cache?.error
 
     cb err, result
+
+exports.getGitUsers = (cb)->
+  _entity.project.getGitUsers (err,result)->
+    cb err,result
 
 #获取所有的活动任务
 exports.getActiveTask = (project_id, cb)->

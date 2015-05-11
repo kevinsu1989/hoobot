@@ -1,3 +1,4 @@
+
 <div>
     <textarea id="tmpl-home-default">
 
@@ -79,6 +80,7 @@
                     <h3>任务列表</h3>
                 </div>
             </div>
+            <classify-user-list></classify-user-list>
             <div class="row">
                 <div class="eight wide column">
                     <preview-project-list></preview-project-list>
@@ -380,4 +382,27 @@
             </div>
         </div>
     </textarea>
+
+
+    <textarea id="tmpl-classify-user-list">
+        <div class="ui secondary  menu">
+            <a ng-repeat="user in gitUsers" ng-click="onClickUserItem($event, user.git_username)"
+               class="item" href="/" ng-class="{active: user.git_username == activeMenu}">
+               {{user.git_username}}
+            </a>
+        </div>
+    </textarea>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
