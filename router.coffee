@@ -40,6 +40,11 @@ releaseRouter = (req)->
   _api.release req.data, (err, task_id)->
     req.io.respond err and err.toJSON(), task_id
 
+#获取所有的gituser
+getGitUsersRouter = (req)->
+  _api.getGitUsers (err, result)->
+    req.io.respond result
+
 #获取所有的项目
 getProjectsRouter = (req)->
   _api.getProject req.data, (err, result )->
@@ -106,6 +111,7 @@ exports.init = (app)->
   #执行任务
   app.io.route 'runTask', runTaskRouter
   app.io.route 'getProjects', getProjectsRouter
+  app.io.route 'getGitUsers', getGitUsersRouter
   app.io.route 'saveProject', saveProjectRouter
   app.io.route 'getTags', getTagsRouter
   app.io.route 'refreshTag', refreshTagRouter

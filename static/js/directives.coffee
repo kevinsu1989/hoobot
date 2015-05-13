@@ -83,16 +83,29 @@ define [
       scope.onClickProjectItem = (event, project)->
         scope.currentProjectId = project.project_id
 
-      cond = type: 'preview'
-      SOCKET.getProjects cond, (data)->
-        data.sort (left, right)->
-          leftName = $filter('projectName')(left.repos, true).toLowerCase()
-          rightName = $filter('projectName')(right.repos, true).toLowerCase()
-          if leftName is rightName then 0 else 1
+      getProjects = (cond)->
+        SOCKET.getProjects cond, (data)->
+          data.sort (left, right)->
+            leftName = $filter('projectName')(left.repos, true).toLowerCase()
+            rightName = $filter('projectName')(right.repos, true).toLowerCase()
+            if leftName is rightName then 0 else 1
 
-        scope.projects = data
-        scope.currentProjectId = data[0].project_id if data.length > 0
-        scope.$apply()
+          scope.projects = data
+          scope.currentProjectId = data[0].project_id if data.length > 0
+          console.log scope.projects
+          scope.$apply()
+
+      scope.$on 'classify:project:request', (event, gitUserName)->
+        cond = 
+          type: 'preview'
+          git_username: gitUserName
+        console.log cond
+        getProjects cond
+
+      cond = 
+        type: 'preview'
+        git_username: 'honey-lab'
+      getProjects cond
   ])
 
   #实时的日志
@@ -325,3 +338,26 @@ define [
 
       scope.onClickRelease = -> submitRelease()
   ])
+
+  #分类用户列表
+  .directive('classifyUserList', ['$filter', 'SOCKET', ($filter, SOCKET)->
+    restrict: 'E'
+    replace: true
+    template: _utils.extractTemplate '#tmpl-classify-user-list', _template
+    link: (scope, element, attrs)->
+      SOCKET.getGitUsers (data)->
+        scope.gitUsers = data
+        scope.activeMenu = "honey-lab"
+      scope.onClickUserItem = (event, user)->
+        scope.activeMenu = user
+        scope.$emit 'classify:project:request', user
+  ])
+
+
+
+
+
+
+
+
+

@@ -40,3 +40,8 @@ define [
       ($rootScope, $scope, SOCKET)->
         $rootScope.activeMenu = 'release'
   ])
+
+  .controller('classifyController', ['$rootScope', '$scope', 'SOCKET',
+      ($rootScope, $scope, SOCKET)->
+        $rootScope.activeMenu = 'classify'
+  ])
