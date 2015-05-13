@@ -84,7 +84,8 @@ exports.execute = (attachment, projectName, task, cb)->
   else
     _path.join _utils.previewDirectory(), projectName
 
-  _fs.emptyDirSync targetDir
+  _fs.removeSync targetDir
+
   command = {
     command: "tar xf #{tarFile} -C #{targetDir}"
     description: "解开tar包到目标项目"
