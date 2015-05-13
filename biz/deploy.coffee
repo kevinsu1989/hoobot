@@ -85,6 +85,7 @@ exports.execute = (attachment, projectName, task, cb)->
     _path.join _utils.previewDirectory(), projectName
 
   _fs.removeSync targetDir
+  _fs.ensureDirSync targetDir
 
   command = {
     command: "tar xf #{tarFile} -C #{targetDir}"
