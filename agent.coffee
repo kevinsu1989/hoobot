@@ -31,7 +31,16 @@ _app.configure(->
 )
 
 _app.get('/', (req, res, next)->
-  res.end 'post only'
+  _fs.readdir _config.testDirectory, (err, result)->
+    _http.responseJSON err, result, res
+)
+
+_app.delete('/', (req, res, next)->
+  directive =  _config.testDirectory + '/' +req.body.dir
+  if _fs.existsSync directive
+    _fs.removeSync directive
+    return res.end 'success'
+  res.end 'false'
 )
 
 #接收并处理主服务器提交过来的分发内容
@@ -66,7 +75,7 @@ _app.get('/are-you-working', (req, res, next)->
     previewDirectory: _config.previewDirectory
   _http.responseJSON null, data, res
 )
-
+console.log 111
 _app.listen _app.get('port')
 console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
 
