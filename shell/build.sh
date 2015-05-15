@@ -41,7 +41,7 @@ fi
 
 if [ -z "$COMMAND" ] ; then
     echo "执行silky命令"
-    silky build -o "$BUILDDIR"
+    silky build -o "$BUILDDIR" -e production
 else
     echo "执行自定义命令"
     eval $COMMAND
