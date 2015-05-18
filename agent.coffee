@@ -29,7 +29,7 @@ _app.configure(->
   }))
 
   _app.use(require('less-middleware')(__dirname + '/static'))
-  _app.use(_express.static(__dirname + '/static'))
+  # _app.use(_express.static(__dirname + '/static'))
   _app.use(_express.methodOverride())
   _app.use(_express.bodyParser(
     uploadDir: uploadDir
@@ -52,6 +52,13 @@ _app.delete('/api/agent', (req, res, next)->
     _fs.removeSync directive
     return res.end 'success'
   res.end 'false'
+)
+_app.get('/', (req, res, next)->
+  res.sendfile _path.join __dirname, "/static/agent.html"
+)  
+
+_app.get('*', (req, res, next)->
+  res.sendfile _path.join __dirname, "/static/#{req.params[0]}"
 )
 
 #接收并处理主服务器提交过来的分发内容
@@ -87,5 +94,5 @@ _app.get('/are-you-working', (req, res, next)->
   _http.responseJSON null, data, res
 )
 _app.listen _app.get('port')
-# console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
+console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
 
