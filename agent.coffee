@@ -21,6 +21,19 @@ _app.configure(->
   uploadDir = _path.resolve __dirname, _config.uploadTemporary
   _fs.ensureDirSync uploadDir
 
+
+  console.log __dirname
+  _app.use(require('coffee-middleware')({
+    src: __dirname + '/static/agent'
+    compress: true
+  }))
+  _app.use(require('less-middleware')(__dirname + '/static/agent'))
+
+
+
+  _app.use(_express.static(__dirname + '/static/agent'))
+
+
   _app.use(_express.methodOverride())
   _app.use(_express.bodyParser(
     uploadDir: uploadDir
@@ -30,13 +43,15 @@ _app.configure(->
   _app.set 'port', _config.port.agent || 1518
 )
 
-_app.get('/', (req, res, next)->
-  _fs.readdir _config.testDirectory, (err, result)->
+
+
+_app.get('/api/agent', (req, res, next)->
+  _fs.readdir _config.previewDirectory, (err, result)->
     _http.responseJSON err, result, res
 )
 
-_app.delete('/', (req, res, next)->
-  directive =  _config.testDirectory + '/' +req.body.dir
+_app.delete('/api/agent', (req, res, next)->
+  directive =  _config.previewDirectory + '/' +req.body.dir
   if _fs.existsSync directive
     _fs.removeSync directive
     return res.end 'success'
@@ -44,7 +59,7 @@ _app.delete('/', (req, res, next)->
 )
 
 #接收并处理主服务器提交过来的分发内容
-_app.post('/', (req, res, next)->
+_app.post('/api/agent', (req, res, next)->
   _utils.emitRealLog(
     message: '代理服务器收到分发请求'
     body: req.body
@@ -63,7 +78,7 @@ _app.post('/', (req, res, next)->
       error: err
     )
 
-    console.log message
+    # console.log message
     result = success: !err
     _http.responseJSON err, result, res
 )
@@ -75,7 +90,6 @@ _app.get('/are-you-working', (req, res, next)->
     previewDirectory: _config.previewDirectory
   _http.responseJSON null, data, res
 )
-console.log 111
 _app.listen _app.get('port')
-console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
+# console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
 
