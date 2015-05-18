@@ -24,16 +24,12 @@ _app.configure(->
 
   console.log __dirname
   _app.use(require('coffee-middleware')({
-    src: __dirname + '/static/agent'
+    src: __dirname + '/static'
     compress: true
   }))
-  _app.use(require('less-middleware')(__dirname + '/static/agent'))
 
-
-
-  _app.use(_express.static(__dirname + '/static/agent'))
-
-
+  _app.use(require('less-middleware')(__dirname + '/static'))
+  _app.use(_express.static(__dirname + '/static'))
   _app.use(_express.methodOverride())
   _app.use(_express.bodyParser(
     uploadDir: uploadDir
