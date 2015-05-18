@@ -55,7 +55,7 @@ _app.delete('/api/agent', (req, res, next)->
 )
 
 #接收并处理主服务器提交过来的分发内容
-_app.post('/api/agent', (req, res, next)->
+_app.post('/', (req, res, next)->
   _utils.emitRealLog(
     message: '代理服务器收到分发请求'
     body: req.body
