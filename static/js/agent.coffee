@@ -1,5 +1,3 @@
-
-console.log $('tbody')
 getList = ()->
 	$.get '/api/agent', (res)->
 		html = ""
