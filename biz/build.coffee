@@ -18,9 +18,10 @@ exports.execute = (task, cb)->
   buildTarget = _utils.buildDireectory projectName
   #shell脚本的位置
 
+  env = if task.type is 'preview' then 'preview' else 'production'
+  buildCommand = task.command || "silky build -o \"#{buildTarget}\" -e #{env}"
   shellFile = _path.join __dirname, '..', 'shell', 'build.sh'
-  commandText = "sh '#{shellFile}' '#{task.repos}' '#{reposProjectDir}' '#{buildTarget}' '#{task.hash}'"
-  commandText += " '#{task.command}'" if task.command
+  commandText = "sh '#{shellFile}' '#{task.repos}' '#{reposProjectDir}' '#{buildTarget}' '#{task.hash}' '#{buildCommand}'"
   command =
     command: commandText
     task: task

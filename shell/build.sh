@@ -39,10 +39,13 @@ if [ -f "$SUBMODULE" ] ; then
     #git submodule foreach git fetch origin master
 fi
 
-if [ -z "$COMMAND" ] ; then
-    echo "执行silky命令"
-    silky build -o "$BUILDDIR" -e production
-else
-    echo "执行自定义命令"
-    eval $COMMAND
-fi
+#统一在调用的时候提供build命令
+eval $COMMAND
+
+#if [ -z "$COMMAND" ] ; then
+#    echo "执行silky命令"
+#    silky build -o "$BUILDDIR" -e production
+#else
+#    echo "执行自定义命令"
+#    eval $COMMAND
+#fi
