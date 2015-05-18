@@ -12,7 +12,6 @@ _redisStore = new require('connect-redis')(_express)
 _app.http().io()
 require 'shelljs/global'
 require 'colors'
-
 _utils = require './utils'
 _config = require './config'
 

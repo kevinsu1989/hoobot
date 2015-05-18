@@ -7,9 +7,14 @@ _ = require 'lodash'
 
 _api = require './biz/api'
 _utils = require './utils'
+_fs = require 'fs-extra'
+_config = require './config'
 _supervisor = require './biz/supervisor'
 _status = require './biz/status'
-_tags = require('./biz/tags')
+_tags = require './biz/tags'
+
+
+
 
 #git hook的路由
 gitHookRoute = (req, res, next)->
@@ -19,6 +24,18 @@ gitHookRoute = (req, res, next)->
 saveTask = (req, res, next)->
   data = req.body
   _api.saveTask data, (err, result)-> _http.responseJSON err, result, res
+
+getAgent = (req, res, next)->
+  _fs.readdir _config.previewDirectory, (err, result)->
+    _http.responseJSON err, result, res
+  
+deleteAgent = (req, res, next)->
+  directive =  _config.previewDirectory + '/' +req.body.dir
+  if _fs.existsSync directive
+    _fs.removeSync directive
+    return res.end 'success'
+  res.end 'false'
+  
 
 #获取服务器当前运行的任务，有多少个任务需要执行
 hoobotStatusRouter = (req)->
@@ -123,6 +140,10 @@ exports.init = (app)->
   #常规http的路由
   app.post '/api/git/commit', gitHookRoute
   app.post '/api/task', saveTask
+  app.get '/api/agent', getAgent
+  app.delete '/api/agent', deleteAgent
   app.get /(\/\w+)?$/, (req, res, next)-> res.sendfile 'static/index.html'
+
+
 
 #  _supervisor.runTask 20423
