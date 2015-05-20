@@ -92,14 +92,12 @@ define [
 
           scope.projects = data
           scope.currentProjectId = data[0].project_id if data.length > 0
-          console.log scope.projects
           scope.$apply()
 
       scope.$on 'classify:project:request', (event, gitUserName)->
         cond = 
           type: 'preview'
           git_username: gitUserName
-        console.log cond
         getProjects cond
 
       cond = 

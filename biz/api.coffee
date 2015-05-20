@@ -137,7 +137,6 @@ exports.deleteDeliveryServer = (id, cb)->
 
 #保存项目信息
 exports.saveProject = (data, cb)->
-  console.log data
   reg=/\:(.*)\//
   data.git_username = reg.exec(data.repos_git)[1]
   _entity.project.save data, cb
