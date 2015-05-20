@@ -24,7 +24,8 @@ class ActiveTask extends _BaseEntity
             left join
         task B ON A.hash = B.hash
             AND A.project_id = B.project_id
-            AND A.type = B.type WHERE 1 = 1"
+            AND A.type = B.type  
+            AND A.server = B.target WHERE 1 = 1"
 
     sql += " AND A.project_id = #{project_id}" if project_id
     @execute sql, cb
