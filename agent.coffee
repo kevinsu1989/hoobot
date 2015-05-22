@@ -53,12 +53,13 @@ _app.delete('/api/agent', (req, res, next)->
     return res.end 'success'
   res.end 'false'
 )
-_app.get('/', (req, res, next)->
-  res.sendfile _path.join __dirname, "/static/agent.html"
-)  
 
-_app.get('*', (req, res, next)->
-  res.sendfile _path.join __dirname, "/static/#{req.params[0]}"
+#供服务器询询用
+_app.get('/are-you-working', (req, res, next)->
+  data =
+    version: require('./package.json').version
+    previewDirectory: _config.previewDirectory
+  _http.responseJSON null, data, res
 )
 
 #接收并处理主服务器提交过来的分发内容
@@ -86,12 +87,12 @@ _app.post('/', (req, res, next)->
     _http.responseJSON err, result, res
 )
 
-#供服务器询询用
-_app.get('/are-you-working', (req, res, next)->
-  data =
-    version: require('./package.json').version
-    previewDirectory: _config.previewDirectory
-  _http.responseJSON null, data, res
+_app.get('/', (req, res, next)->
+  res.sendfile _path.join __dirname, "/static/agent.html"
+)  
+
+_app.get('*', (req, res, next)->
+  res.sendfile _path.join __dirname, "/static/#{req.params[0]}"
 )
 _app.listen _app.get('port')
 console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
