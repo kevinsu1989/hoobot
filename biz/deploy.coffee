@@ -19,7 +19,7 @@ writeVersionFile = (target, data)->
 #复制项目到sync目录
 copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
   #是否为hone项目
-  isHoney =  /^honey$/.test projectName
+  isHoney =  /^honey(\-2\.0)?$/i.test projectName
   projectName = 'honey-2.0' if isHoney
 
   versionData =
