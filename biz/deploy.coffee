@@ -56,9 +56,10 @@ copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
 #release，还需要复制css/image/js三个目录，同时生成version.json并写入tag
 copyNormalProjectToSync = (syncDir, sourceDir)->
   #复制
-  _.map ['image', 'js', 'css'], (folder)->
+  _.map ['image', 'js', 'css', 'template'], (folder)->
     source = _path.join sourceDir, folder
     target = _path.join syncDir, folder
+    #folder.replace('template', 'html')
 
     #源文件夹不存在
     return if not _fs.existsSync(source)
