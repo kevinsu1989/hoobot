@@ -14,8 +14,6 @@ _status = require './biz/status'
 _tags = require './biz/tags'
 
 
-
-
 #git hook的路由
 gitHookRoute = (req, res, next)->
   data = req.body
