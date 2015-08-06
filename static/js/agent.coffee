@@ -1,12 +1,17 @@
 getList = ()->
 	$.get '/api/agent', (res)->
 		html = ""
-		html += "<tr><td>#{item}</td><td> <div class='ui button red' onclick=document.deleteAgent('#{item}')>删除</div> </td></tr>" for item in res
+		for item in res
+			html += "<tr><td>#{item.name}</td><td> <div class='ui button red' onclick=document.deleteAgent('#{item.name}',#{item.locked})>删除</div>"
+			html += "<i class='lock icon'>" if item.locked
+			html += "</td></tr>" 	
 		$('tbody').html html
 
 
-document.deleteAgent = (name)->
-	return if !confirm '确认删除?'
+document.deleteAgent = (name, locked)->
+	return if !confirm '确认删除?' 
+	return if locked && !confirm '此项目已被加锁，确认删除?' 
+
 	$.ajax 
 		url: '/api/agent'
 		type: 'delete'
