@@ -65,13 +65,9 @@ _app.delete('/api/agent', (req, res, next)->
 )
 
 _app.get('/api/lock/:project_name', (req, res, next)->
-  console.log req.params
   directive =  _config.previewDirectory + '/' + req.params.project_name + "/.lock"
   if _fs.existsSync directive
-  # , (result)->
-  #   _http.responseJSON null, result, res
     return res.end 'true'
-
   res.end 'false'
   
 )
@@ -83,6 +79,8 @@ _app.get('/are-you-working', (req, res, next)->
     previewDirectory: _config.previewDirectory
   _http.responseJSON null, data, res
 )
+
+
 
 #接收并处理主服务器提交过来的分发内容
 _app.post('/', (req, res, next)->

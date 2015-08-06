@@ -140,7 +140,12 @@ exports.init = (app)->
   app.post '/api/task', saveTask
   app.get '/api/agent', getAgent
   app.delete '/api/agent', deleteAgent
+  app.get('/api/server', (req, res, next)->
+    _api.getDeliveryServer {pageIndex:1},(err, result)->
+      _http.responseJSON err, result, res
+  )
   app.get /(\/\w+)?$/, (req, res, next)-> res.sendfile 'static/index.html'
+
 
 
 
