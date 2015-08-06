@@ -64,6 +64,18 @@ _app.delete('/api/agent', (req, res, next)->
   res.end 'false'
 )
 
+_app.get('/api/lock/:project_name', (req, res, next)->
+  console.log req.params
+  directive =  _config.previewDirectory + '/' + req.params.project_name + "/.lock"
+  if _fs.existsSync directive
+  # , (result)->
+  #   _http.responseJSON null, result, res
+    return res.end 'true'
+
+  res.end 'false'
+  
+)
+
 #供服务器询询用
 _app.get('/are-you-working', (req, res, next)->
   data =
@@ -87,7 +99,6 @@ _app.post('/', (req, res, next)->
       done null, result
   )
 
-
   queue.push((locked, done)->
     done null, false if !locked
     _fs.readFile _config.previewDirectory + "/" + req.body.project_name + "/.lock", 'utf-8', (err, result)->
@@ -95,8 +106,6 @@ _app.post('/', (req, res, next)->
       done null, locked
   )
 
-
-  
   _async.waterfall(queue,(err, locked)->
     
     return _http.responseJSON err, {"err":"该项目已被加锁，无法在该服务器发布预览"}, res if locked
