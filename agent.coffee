@@ -120,6 +120,8 @@ _app.post('/', (req, res, next)->
         type: 'agent'
         error: err
       )
+
+      done null
   )
 
   _async.waterfall queue, (err, result)->
