@@ -57,7 +57,7 @@ _app.get('/api/agent', (req, res, next)->
 )
 
 _app.delete('/api/agent', (req, res, next)->
-  directive =  _config.previewDirectory + '/' +req.body.dir
+  directive = _config.previewDirectory + '/' +req.body.dir
   if _fs.existsSync directive
     _fs.removeSync directive
     return res.end 'success'
@@ -65,10 +65,15 @@ _app.delete('/api/agent', (req, res, next)->
 )
 
 _app.get('/api/lock/:project_name', (req, res, next)->
-  directive =  _config.previewDirectory + '/' + req.params.project_name + "/.lock"
-  if _fs.existsSync directive
-    return res.end 'true'
-  res.end 'false'
+  url = _config.previewDirectory + '/' + req.params.project_name + "/.lock"
+
+  return res.end '{}' if !_fs.existsSync url
+
+  _fs.readFile url, 'utf-8', (err, result)->
+    # result = JSON.parse(result)
+    return res.end result
+
+  
   
 )
 
@@ -93,21 +98,17 @@ _app.post('/', (req, res, next)->
   queue = []
 
   queue.push((done)->
-    _fs.exists _config.previewDirectory + "/" + req.body.project_name + "/.lock", (result)->
-      done null, result
+    url = "#{_config.previewDirectory}/#{req.body.project_name}/.lock"
+    if _fs.existsSync url
+      _fs.readFile url, 'utf-8', (err, result)->
+        locked = JSON.parse(result).owner isnt req.body.owner
+        done null, locked
+    else
+      done null, false
   )
 
   queue.push((locked, done)->
-    done null, false if !locked
-    _fs.readFile _config.previewDirectory + "/" + req.body.project_name + "/.lock", 'utf-8', (err, result)->
-      locked = JSON.parse(result).owner isnt req.body.owner
-      done null, locked
-  )
-
-  _async.waterfall(queue,(err, locked)->
-    
-    return _http.responseJSON err, {"err":"该项目已被加锁，无法在该服务器发布预览"}, res if locked
-
+    return done _http.notAcceptableError "该项目已被加锁，无法在该服务器发布预览" if locked
     attachment = req.files.attachment
     projectName = req.body.project_name || req.body.projectName || _utils.extractProjectName(task?.repos) || 'unknown'
 
@@ -119,13 +120,13 @@ _app.post('/', (req, res, next)->
         type: 'agent'
         error: err
       )
-
-      # console.log message
-      result = success: !err
-      _http.responseJSON err, result, res
-
-
   )
+
+  _async.waterfall queue, (err, result)->
+    # console.log message
+    result = success: !err
+    _http.responseJSON err, result, res
+
 
 )
 
