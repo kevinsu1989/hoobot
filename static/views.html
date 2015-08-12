@@ -15,7 +15,7 @@
                         <th class="one wide"></th>
                         <th class="one wide">UUID</th>
                         <th class="three wide">服务器地址</th>
-                        <th class="one wide">状态码</th>
+                        <th class="one wide">Status</th>
                         <th class="one wide">版本</th>
                         <th>工作目录</th>
                         <th class="three wide">最后检查</th>
@@ -95,7 +95,7 @@
 
     <!--任务列表-->
     <textarea id="tmpl-task-list">
-        <table class="ui celled structured table">
+        <table class="ui celled structured table custom-commit-list">
             <thead>
             <tr>
                 <th class="one wide">Hash</th>
@@ -111,7 +111,11 @@
                 <td>
                     <a href="{{task.url}}" target="_blank">{{task.hash | limitTo: 10}}</a>
                 </td>
-                <td>{{task.message}}</td>
+                <td>
+                    <span class="custom-message">
+                        {{task.message}}
+                    </span>
+                </td>
                 <td>{{task.timestamp | date: 'yyyy-MM-dd HH:mm'}}</td>
                 <td>{{task.last_execute | date: 'yyyy-MM-dd HH:mm'}}</td>
                 <td>{{task.status | taskStatus}}</td>
@@ -135,7 +139,7 @@
                              <tr>
                                  <td class="two wide center aligned">服务器</td>
                                  <td class="custom-left-padding">message & hash</td>
-                                 <td class="four wide center aligned">部署时间</td>
+                                 <td class="four wide center aligned custom-deploy-time">部署时间</td>
                              </tr>
                          </thead>
                      </table>
@@ -180,9 +184,9 @@
                 </td>
                 <td class="custom-left-padding">
                     <a href="{{item.url}}" target="_blank">{{item.hash | limitTo: 10}}</a>
-                    <span>{{item.message}}</span>
+                    <span class="custom-message">{{item.message}}</span>
                 </td>
-                <td class="four wide center aligned">{{item.timestamp | date: 'yyyy-MM-dd hh:mm'}}</td>
+                <td class="four wide center aligned  custom-deploy-time">{{item.timestamp | date: 'yyyy-MM-dd hh:mm'}}</td>
             </tr>
         </table>
     </textarea>
@@ -284,9 +288,11 @@
                             </p>
                         </td>
                         <td>
-                            {{tag.commit.message}}
+                            <span class="custom-message">
+                                {{tag.commit.message}}
+                            </span>
                         </td>
-                        <td class="center aligned">
+                        <td class="center aligned" style="min-width: 100px">
                             <div class="ui teal button" ng-click="onClickDeploy($event, tag)">发布</div>
                         </td>
                     </tr>
