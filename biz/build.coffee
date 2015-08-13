@@ -21,7 +21,6 @@ exports.execute = (task, cb)->
   env = if task.type is 'preview' then 'preview' else 'production'
   shellFile = _path.join __dirname, '..', 'shell', 'build.sh'
   commandText = "sh '#{shellFile}' '#{task.repos}' '#{reposProjectDir}' '#{buildTarget}' '#{task.hash}'"
-  console.log command
   command =
     command: commandText
     task: task

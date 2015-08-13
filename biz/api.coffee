@@ -150,7 +150,6 @@ exports.removeProject = (id, cb)->
 #获取项目
 exports.getProject = (cond, cb)->
   cond = cond || {}
-  console.log cond
   return _entity.task.getAllProject(cond, cb) if cond.type is 'preview'
   
   _entity.project.fetch cond, (err, result)->
