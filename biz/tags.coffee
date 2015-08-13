@@ -30,6 +30,7 @@ class GitLabInterface
 
       self.gitlab.projects.repository.listTags project.id, (tags)->
         result = []
+        return cb null, result if not(tags and tags.length)
 
         tags = tags.sort (left, right)->
           leftDate = new Date(left.commit.committed_date).getTime()

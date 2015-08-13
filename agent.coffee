@@ -35,7 +35,7 @@ _app.configure(->
     limit: '1024mb'
     keepExtensions: true
   ))
-  _app.set 'port', _config.port.agent || 1518
+  _app.set 'port', process.env.PORT || _config.port.agent || 1518
 )
 
 
@@ -121,6 +121,7 @@ _app.post('/', (req, res, next)->
         type: 'agent'
         error: err
       )
+
       done null
   )
 
@@ -138,5 +139,5 @@ _app.get('*', (req, res, next)->
   res.sendfile _path.join __dirname, "/static/#{req.params[0]}"
 )
 _app.listen _app.get('port')
-console.log "Port: #{_app.get 'port'}, Now: #{new Date()}"
+console.log "Hoobot agent is running on port #{_app.get 'port'}, Now: #{new Date()}"
 

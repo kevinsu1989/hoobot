@@ -19,7 +19,7 @@ writeVersionFile = (target, data)->
 #复制项目到sync目录
 copyToSync = (projectName, sourceDir, task, isSpecialSubject, isPlayerSubject)->
   #是否为hone项目
-  isHoney =  /^honey$/.test projectName
+  isHoney =  /^honey(\-2\.0)?$/i.test projectName
   projectName = 'honey-2.0' if isHoney
 
   versionData =
@@ -59,9 +59,10 @@ copyToSync = (projectName, sourceDir, task, isSpecialSubject, isPlayerSubject)->
 #release，还需要复制css/image/js三个目录，同时生成version.json并写入tag
 copyNormalProjectToSync = (syncDir, sourceDir)->
   #复制
-  _.map ['image', 'js', 'css'], (folder)->
+  _.map ['image', 'js', 'css', 'template'], (folder)->
     source = _path.join sourceDir, folder
     target = _path.join syncDir, folder
+    #folder.replace('template', 'html')
 
     #源文件夹不存在
     return if not _fs.existsSync(source)

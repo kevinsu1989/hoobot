@@ -64,4 +64,4 @@ module.exports = (app)->
   _supervisor.execute()
 #  _supervisor.runTask 158, null
   _status.init()
-  _tags.init()
+#  _tags.init()
