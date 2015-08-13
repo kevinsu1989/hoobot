@@ -95,7 +95,6 @@ class Task extends _BaseEntity
               LEFT JOIN
           task C ON B.task_id = C.id
       ORDER BY C.last_execute ASC"
-    console.log sql
     
     @execute sql, cb
 
