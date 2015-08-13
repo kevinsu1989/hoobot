@@ -98,7 +98,9 @@ exports.getTask = (query, cb)->
       timestamp: 'DESC'
 
     pagination: _entity.task.pagination query.pageIndex, query.pageSize
-  _entity.task.find cond, options, cb
+  _entity.task.find cond, options, (err, result)->
+    # console.log arguments
+    cb err, result
 
 #获取服务器列表
 exports.getDeliveryServer = (query, cb)->
@@ -148,8 +150,9 @@ exports.removeProject = (id, cb)->
 #获取项目
 exports.getProject = (cond, cb)->
   cond = cond || {}
+  console.log cond
   return _entity.task.getAllProject(cond, cb) if cond.type is 'preview'
-
+  
   _entity.project.fetch cond, (err, result)->
     _.map result, (item)->
       cache = _tags.getTags(item.id)

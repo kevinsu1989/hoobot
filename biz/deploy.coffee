@@ -17,7 +17,7 @@ writeVersionFile = (target, data)->
   _fs.writeJSONFileSync versionFile, data
 
 #复制项目到sync目录
-copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
+copyToSync = (projectName, sourceDir, task, isSpecialSubject, isPlayerSubject)->
   #是否为hone项目
   isHoney =  /^honey$/.test projectName
   projectName = 'honey-2.0' if isHoney
@@ -32,6 +32,9 @@ copyToSync = (projectName, sourceDir, task, isSpecialSubject)->
   #专题，有子文件夹
   if isSpecialSubject
     syncBaseDir = _path.join _config.syncDirectory, 'zt'
+    syncDir = _path.join syncBaseDir, projectName
+  else if isPlayerSubject
+    syncBaseDir = _path.join _config.syncDirectory, 'player'
     syncDir = _path.join syncBaseDir, projectName
   else
     syncDir = syncBaseDir = _path.join _config.syncDirectory, projectName
@@ -75,6 +78,8 @@ exports.execute = (attachment, projectName, task, cb)->
 
   #是否为专题
   isSpecialSubject = /^zt\-/.test projectName
+  #是否为专题
+  isPlayerSubject = /^player/.test projectName
 
   tarFile = attachment.path
 
@@ -97,6 +102,21 @@ exports.execute = (attachment, projectName, task, cb)->
     #不管有没有成功，都要删除临时文件，如果没有成功，返回错误信息到分发服务器再行处理
     _fs.unlinkSync tarFile
     #如果是release，则复制文件到sync文件夹
-    copyToSync projectName, targetDir, task, isSpecialSubject if task.type is 'release'
+    copyToSync projectName, targetDir, task, isSpecialSubject, isPlayerSubject if task.type is 'release'
+
+    # if isPlayerSubject
+    #   filePath = _path.join _utils.previewDirectory(), 'player', 'version1.json'
+    #   data = "
+    #     {
+    #       'project':'#{projectName}',
+    #       'tag':'',
+    #       'hash':'',
+    #       'timestamp':'#{new Date()}'
+
+    #     }
+    #   "
+    #   _fs.writeFileSync filePath, data, {encoding:'utf-8'}
+
 
     cb err
+

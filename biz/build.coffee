@@ -19,15 +19,31 @@ exports.execute = (task, cb)->
   #shell脚本的位置
 
   env = if task.type is 'preview' then 'preview' else 'production'
-  buildCommand = task.command || "silky build -o \"#{buildTarget}\" -e #{env}"
   shellFile = _path.join __dirname, '..', 'shell', 'build.sh'
-  commandText = "sh '#{shellFile}' '#{task.repos}' '#{reposProjectDir}' '#{buildTarget}' '#{task.hash}' '#{buildCommand}'"
+  commandText = "sh '#{shellFile}' '#{task.repos}' '#{reposProjectDir}' '#{buildTarget}' '#{task.hash}'"
+  console.log command
   command =
     command: commandText
     task: task
     description: '执行构建脚本'
 
-  _utils.execCommandWithTask command, cb
+  _utils.execCommandWithTask command, (err)->
+    buildCommand = "cd #{reposProjectDir} && "
+    if _fs.existsSync _path.join(reposProjectDir, '.hoobot')
+      config = JSON.parse _fs.readFileSync(_path.join(reposProjectDir, '.hoobot'), 'utf-8')
+      # projectName = config.projectName
+      # buildTarget = _path.join(_utils.tempDirectory(), 'repos', config.buildTarget)
+      buildCommand += config.command
+    else
+      buildCommand += task.command || "silky build -o \"#{buildTarget}\" -e #{env}"
+
+
+    command =
+      command: buildCommand
+      task: task
+      description: '执行构建脚本'
+    _utils.execCommandWithTask command, cb
+
 
   ###
   #检查本地仓库是否存在，如果存在，则使用fetch

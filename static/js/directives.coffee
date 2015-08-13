@@ -89,7 +89,7 @@ define [
             leftName = $filter('projectName')(left.repos, true).toLowerCase()
             rightName = $filter('projectName')(right.repos, true).toLowerCase()
             if leftName is rightName then 0 else 1
-
+          console.log data
           scope.projects = data
           scope.currentProjectId = data[0].project_id if data.length > 0
           scope.$apply()

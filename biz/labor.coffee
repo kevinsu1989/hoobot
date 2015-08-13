@@ -51,6 +51,7 @@ class Labor
     )
 
     _async.waterfall queue, (err)->
+      console.log err if err
       task.status = if err then _enum.Failure else _enum.Success
       self.finishTask task, (otherErr)-> cb(err || otherErr)
 

@@ -121,11 +121,15 @@ exports.execute = (data, cb)->
     (done)->
       return done null if project_id
 
+      reg=/\:(.*)\//
+      git_username = reg.exec(data.repository.url)[1]
+
       projectData =
         repos_git: data.repository.url
         repos_url: data.repository.homepage
         timestamp: new Date().valueOf()
         repos_name: _utils.extractProjectName data.repository.url
+        git_username: git_username
 
       _entity.project.save projectData, (err, id)->
         project_id = id

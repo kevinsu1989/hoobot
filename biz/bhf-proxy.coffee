@@ -19,7 +19,7 @@ requestToken = (cb)->
 exports.getAllProject = ()->
   params = pageSize: 9999
   @requestBHF 'project', 'get', params, null, (err, res, result)->
-    console.log result
+    # console.log result
 
 #根据git地址，查找对应的项目
 exports.findProjectWithGit = (git, cb)->

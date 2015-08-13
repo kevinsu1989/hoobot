@@ -99,12 +99,13 @@ _app.post('/', (req, res, next)->
 
   queue.push((done)->
     url = "#{_config.previewDirectory}/#{req.body.project_name}/.lock"
-    if _fs.existsSync url
-      _fs.readFile url, 'utf-8', (err, result)->
-        locked = JSON.parse(result).owner isnt req.body.owner
-        done null, locked
-    else
-      done null, false
+    return done null, false if !_fs.existsSync url
+
+    _fs.readFile url, 'utf-8', (err, result)->
+      locked = JSON.parse(result).owner isnt req.body.owner
+
+      done null, locked
+
   )
 
   queue.push((locked, done)->
@@ -120,13 +121,12 @@ _app.post('/', (req, res, next)->
         type: 'agent'
         error: err
       )
+      done null
   )
 
   _async.waterfall queue, (err, result)->
-    # console.log message
     result = success: !err
     _http.responseJSON err, result, res
-
 
 )
 

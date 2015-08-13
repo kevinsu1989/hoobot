@@ -12,7 +12,7 @@ SUBMODULE="$LOCALDIR/.gitmodules"
 #将要部署的hash
 HASH=$4
 #将要执行的命令
-COMMAND=$5
+#COMMAND=$5
 
 
 #从远程获取代码
@@ -40,7 +40,7 @@ if [ -f "$SUBMODULE" ] ; then
 fi
 
 #统一在调用的时候提供build命令
-eval $COMMAND
+#eval $COMMAND
 
 #if [ -z "$COMMAND" ] ; then
 #    echo "执行silky命令"

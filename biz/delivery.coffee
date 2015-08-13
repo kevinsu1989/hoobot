@@ -20,7 +20,7 @@ deliverProject = (source, projectName, task, cb)->
     description: "对文件进行打包"
     task: task
   }
-
+  console.log command
   _utils.execCommandWithTask command, (err)->
     return cb err if err
     #分发到服务器
@@ -29,4 +29,10 @@ deliverProject = (source, projectName, task, cb)->
 exports.execute = (task, cb)->
   projectName = _utils.extractProjectName task.repos
   source = _utils.buildDireectory projectName
+  reposProjectDir = _utils.reposDireectory projectName
+
+  if _fs.existsSync _path.join(reposProjectDir, '.hoobot')
+    config = JSON.parse _fs.readFileSync(_path.join(reposProjectDir, '.hoobot'), 'utf-8')
+    projectName = config.projectName
+    source = _path.join(reposProjectDir, config.buildTarget)
   deliverProject source, projectName, task, cb
